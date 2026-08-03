@@ -60,15 +60,15 @@ export default function Sidebar({
           }}
         >
           <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
           </svg>
           <span>Dashboard Harian</span>
         </button>
 
-        {/* Akumulasi SKU & Expired Matrix */}
+        {/* Akumulasi SKU Matrix */}
         <button
           className={`${styles.navBtn} ${activeView === 'summary' ? styles.active : ''}`}
           onClick={() => onChangeView('summary')}
@@ -79,10 +79,10 @@ export default function Sidebar({
             <line x1="6" y1="20" x2="6" y2="14"></line>
           </svg>
           <span>Akumulasi SKU</span>
-          <span className={`${styles.badge} ${activeView === 'summary' ? styles.activeBadge : ''}`}>NEW</span>
+          <span className={styles.newTag}>NEW</span>
         </button>
 
-        <div className={styles.groupLabel} style={{ marginTop: '10px' }}>FILTER GUDANG</div>
+        <div className={styles.groupLabel}>FILTER GUDANG</div>
 
         {/* WH Fresh */}
         <button
@@ -91,8 +91,8 @@ export default function Sidebar({
         >
           <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="2" x2="12" y2="22"></line>
-            <line x1="20" y1="7" x2="4" y2="17"></line>
-            <line x1="20" y1="17" x2="4" y2="7"></line>
+            <path d="M20 16l-8 4-8-4"></path>
+            <path d="M4 8l8-4 8 4"></path>
           </svg>
           <span>WH Fresh</span>
           {itemCounts.fresh > 0 && (
@@ -119,41 +119,31 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* Admin / Footer Links */}
-      <div className={styles.footerGroup}>
-        {isAdmin ? (
-          <>
-            <div className={styles.groupLabel}>ADMINISTRASI</div>
-            <button className={styles.navBtn} onClick={onSettingsClick}>
-              <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-              </svg>
-              <span>Pengaturan Sheet</span>
-            </button>
-            <button className={styles.navBtn} onClick={onLogout}>
-              <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-              </svg>
-              <span>Logout</span>
-            </button>
-            <div className={styles.adminPill}>
-              <span className={styles.onlineDot} />
-              <span>Admin Logged In</span>
-            </div>
-          </>
-        ) : (
-          <button className={styles.loginBtn} onClick={onLoginClick}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      {/* Admin / Footer Links (Only rendered when logged in) */}
+      {isAdmin && (
+        <div className={styles.footerGroup}>
+          <div className={styles.groupLabel}>ADMINISTRASI</div>
+          <button className={styles.navBtn} onClick={onSettingsClick}>
+            <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
-            <span>Login Admin</span>
+            <span>Pengaturan Sheet</span>
           </button>
-        )}
-      </div>
+          <button className={styles.navBtn} onClick={onLogout}>
+            <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Logout</span>
+          </button>
+          <div className={styles.adminPill}>
+            <span className={styles.onlineDot} />
+            <span>Admin Logged In</span>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }
