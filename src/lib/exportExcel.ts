@@ -89,7 +89,7 @@ function buildWorksheet(
 
   const kpi2Val = worksheet.getCell('D4');
   kpi2Val.value = grandTotalUnits;
-  kpi2Val.numFmt = '#,##0 "Unit"';
+  kpi2Val.numFmt = '#,##0 "Qty"';
   kpi2Val.font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FF0A0A0A' } };
   kpi2Val.alignment = { vertical: 'middle', horizontal: 'center' };
   kpi2Val.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF08A' } };
