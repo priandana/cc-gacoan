@@ -237,8 +237,8 @@ export default function HomePage() {
               sortDir={sortDir}
               isLoading={isLoading}
               error={error}
-              onSearchChange={setSearch}
-              onSortChange={setSort}
+              onSearch={setSearch}
+              onSort={setSort}
               onRetry={handleRefresh}
             />
           </>
