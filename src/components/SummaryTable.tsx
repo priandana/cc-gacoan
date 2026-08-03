@@ -5,6 +5,7 @@ import styles from './SummaryTable.module.css';
 import { CycleItem, SheetConfig, SourceFilter } from '@/lib/types';
 import { formatExpDate } from '@/lib/utils';
 import { fetchCycleData } from '@/lib/sheetsApi';
+import { exportMatrixToExcel } from '@/lib/exportExcel';
 
 interface Props {
   initialItems: CycleItem[];
@@ -36,6 +37,7 @@ export default function SummaryTable({
   const [manualSyncedData, setManualSyncedData] = useState<Record<number, CycleItem[]>>({});
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const [syncedCount, setSyncedCount] = useState(0);
+  const [isExporting, setIsExporting] = useState(false);
 
   const days = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
@@ -70,7 +72,6 @@ export default function SummaryTable({
   const summaryRows = useMemo(() => {
     const map = new Map<string, SkuSummaryRow>();
 
-    // Priority: manualSyncedData -> allDateDataMap -> initialItems fallback for selectedDate
     const combinedMap: Record<number, CycleItem[]> = {
       ...allDateDataMap,
       ...manualSyncedData,
@@ -136,6 +137,19 @@ export default function SummaryTable({
       ? 'WH FRESH'
       : 'WH DRY';
 
+  // Export Excel Handler
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      await exportMatrixToExcel(filteredRows, sourceBadgeLabel, selectedDate);
+    } catch (e) {
+      console.error('[SummaryTable] Export error:', e);
+      alert('Gagal mendownload Excel. Silakan coba lagi.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const activeConnectedDaysCount = useMemo(() => {
     const combinedMap: Record<number, CycleItem[]> = {
       ...allDateDataMap,
@@ -159,8 +173,19 @@ export default function SummaryTable({
           </div>
         </div>
 
-        {/* Sync Button & Source Filter Tabs */}
+        {/* Sync & Export & Source Filter Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* EXPORT EXCEL BUTTON */}
+          <button
+            className={`${styles.exportBtn} ${isExporting ? styles.exporting : ''}`}
+            onClick={handleExportExcel}
+            disabled={isExporting || filteredRows.length === 0}
+            title="Download Laporan Format Excel Rapi untuk Customer"
+          >
+            <span className={styles.exportIcon}>📊</span>
+            <span>{isExporting ? 'Mengexport Excel...' : 'Export ke Excel (.xlsx)'}</span>
+          </button>
+
           <button
             className={styles.syncBtn}
             onClick={handleSyncAllDates}
