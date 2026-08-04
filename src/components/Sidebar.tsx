@@ -1,5 +1,8 @@
+'use client';
+
 import styles from './Sidebar.module.css';
 import { SourceFilter } from '@/lib/types';
+import { useState } from 'react';
 
 export type ActiveView = 'daily' | 'summary';
 
@@ -30,8 +33,30 @@ export default function Sidebar({
   onLoginClick,
   itemCounts,
 }: SidebarProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleNav = (fn: () => void) => {
+    fn();
+    setMobileOpen(false);
+  };
+
   return (
-    <aside className={styles.sidebar}>
+    <>
+      {/* Mobile hamburger button */}
+      <button
+        className={styles.hamburger}
+        onClick={() => setMobileOpen(o => !o)}
+        aria-label="Toggle menu"
+      >
+        <span /><span /><span />
+      </button>
+
+      {/* Overlay backdrop */}
+      {mobileOpen && (
+        <div className={styles.overlay} onClick={() => setMobileOpen(false)} />
+      )}
+
+      <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}>
       {/* Brand Header */}
       <div className={styles.logoArea}>
         <div className={styles.logoIcon}>
@@ -54,10 +79,7 @@ export default function Sidebar({
         {/* Daily Dashboard */}
         <button
           className={`${styles.navBtn} ${activeView === 'daily' && sourceFilter === 'all' ? styles.active : ''}`}
-          onClick={() => {
-            onChangeView('daily');
-            onSetSource('all');
-          }}
+          onClick={() => handleNav(() => { onChangeView('daily'); onSetSource('all'); })}
         >
           <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="3" y="3" width="7" height="7" rx="1"></rect>
@@ -71,7 +93,7 @@ export default function Sidebar({
         {/* Akumulasi SKU Matrix */}
         <button
           className={`${styles.navBtn} ${activeView === 'summary' ? styles.active : ''}`}
-          onClick={() => onChangeView('summary')}
+          onClick={() => handleNav(() => onChangeView('summary'))}
         >
           <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -87,7 +109,7 @@ export default function Sidebar({
         {/* WH Fresh */}
         <button
           className={`${styles.navBtn} ${sourceFilter === 'fresh' ? styles.active : ''}`}
-          onClick={() => onSetSource('fresh')}
+          onClick={() => handleNav(() => onSetSource('fresh'))}
         >
           <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="2" x2="12" y2="22"></line>
@@ -105,7 +127,7 @@ export default function Sidebar({
         {/* WH Dry */}
         <button
           className={`${styles.navBtn} ${sourceFilter === 'dry' ? styles.active : ''}`}
-          onClick={() => onSetSource('dry')}
+          onClick={() => handleNav(() => onSetSource('dry'))}
         >
           <svg className={styles.navIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -145,5 +167,6 @@ export default function Sidebar({
         </div>
       )}
     </aside>
+    </>
   );
 }

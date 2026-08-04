@@ -168,6 +168,17 @@ body {
     flex-direction: column;
   }
   .app-main {
-    padding: 16px;
+    padding: 70px 14px 40px; /* top padding for hamburger button */
+    gap: 14px;
+  }
+  .greeting h1 {
+    font-size: 1.2rem;
+  }
+  .greeting p {
+    font-size: 0.75rem;
+  }
+  .live-dot {
+    font-size: 0.68rem;
+    padding: 5px 10px;
   }
 }

@@ -75,9 +75,12 @@
 }
 
 @media (max-width: 1024px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
 
 @media (max-width: 600px) {
-  .grid { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .card { padding: 14px; }
+  .cardVal { font-size: 1.4rem; }
+  .iconBox { width: 34px; height: 34px; font-size: 1rem; }
 }

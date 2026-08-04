@@ -207,12 +207,69 @@
 }
 
 @media (max-width: 768px) {
-  .sidebar {
+  /* Hamburger button - only visible on mobile */
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 300;
+    width: 42px;
+    height: 42px;
+    padding: 8px;
+    background: #11101D;
+    border: 2px solid #1E1B2E;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #000;
+  }
+
+  .hamburger span {
+    display: block;
     width: 100%;
-    height: auto;
-    min-height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 1px solid #1E1B2E;
+    height: 2.5px;
+    background: #FFFFFF;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+
+  /* Overlay backdrop */
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 199;
+  }
+
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100vh;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: none;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Hide hamburger on desktop */
+@media (min-width: 769px) {
+  .hamburger {
+    display: none;
+  }
+  .overlay {
+    display: none;
   }
 }
