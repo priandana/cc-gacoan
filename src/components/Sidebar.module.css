@@ -1,12 +1,13 @@
 /* =============================================
-   SIDEBAR — redesigned for clarity & premium UX
+   SIDEBAR — Neobrutalism Style
+   Thick borders, hard shadows, flat bold colors
    ============================================= */
 
 .sidebar {
-  width: 248px;
+  width: 252px;
   min-height: 100vh;
-  background: #0D0C1A;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: #11101D;
+  border-right: 3px solid #0A0A0A;
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -22,29 +23,32 @@
 
 /* ── BRAND HEADER ── */
 .logoArea {
-  padding: 22px 18px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 20px 16px 18px;
+  border-bottom: 2px solid #0A0A0A;
   display: flex;
   align-items: center;
   gap: 12px;
+  background: #0D0C1A;
 }
 
 .logoIcon {
   width: 40px;
   height: 40px;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #F97316, #FBBF24);
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4), 0 4px 12px rgba(0,0,0,0.4);
+  border-radius: 10px;
+  background: #F97316;
+  border: 2px solid #0A0A0A;
+  box-shadow: 3px 3px 0px #0A0A0A;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #FFFFFF;
   flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .logoArea:hover .logoIcon {
-  transform: rotate(-6deg) scale(1.08);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #0A0A0A;
 }
 
 .logoText {
@@ -62,10 +66,9 @@
 
 .logoSubtitle {
   font-size: 0.68rem;
-  color: #4B5563;
-  font-weight: 500;
+  color: #6B7280;
+  font-weight: 600;
   margin-top: 2px;
-  letter-spacing: 0.02em;
 }
 
 /* ── SECTIONS ── */
@@ -73,264 +76,285 @@
   display: flex;
   flex-direction: column;
   padding: 14px 12px 10px;
-  gap: 3px;
+  gap: 4px;
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 0 6px 8px;
+  padding: 4px 4px 10px;
+  border-bottom: 1.5px solid #1E1B2E;
+  margin-bottom: 4px;
 }
 
 .sectionDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
   flex-shrink: 0;
-  box-shadow: 0 0 6px currentColor;
+  border: 1.5px solid #0A0A0A;
 }
 
 .sectionLabel {
   font-family: var(--font-head);
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #374151;
+  color: #4B5563;
 }
 
 .divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.05);
-  margin: 0 16px;
+  height: 2px;
+  background: #0A0A0A;
+  margin: 4px 0;
 }
 
 /* ── NAV BUTTONS ── */
 .navBtn {
   width: 100%;
-  padding: 11px 12px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
-  border: none;
-  border-radius: 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
   background: transparent;
   color: #6B7280;
   font-family: var(--font-head);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s ease;
   text-align: left;
   position: relative;
-  overflow: hidden;
-}
-
-.navBtn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0);
-  transition: background 0.2s ease;
 }
 
 .navBtn:hover {
-  color: #E2E8F0;
-  transform: translateX(3px);
-}
-.navBtn:hover::before {
-  background: rgba(255, 255, 255, 0.04);
+  background: #1E1B2E;
+  color: #D1D5DB;
+  border-color: #2D2A3E;
+  transform: translate(-2px, -2px);
+  box-shadow: 2px 2px 0px #0A0A0A;
 }
 
 .navBtn:active {
-  transform: scale(0.98);
+  transform: translate(0, 0);
+  box-shadow: none;
 }
 
+/* Active state — neobrutalism pill */
 .navBtn.active {
+  background: #6366F1;
   color: #FFFFFF;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(79, 70, 229, 0.15));
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.4), 0 4px 16px rgba(99, 102, 241, 0.15);
+  border: 2px solid #0A0A0A;
+  box-shadow: 3px 3px 0px #0A0A0A;
+  transform: translate(0, 0);
 }
 
-.navBtn.active::before { background: transparent; }
+.navBtn.active:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #0A0A0A;
+}
 
 .navLabel {
   flex: 1;
 }
 
-/* Icon wrap — background pill on icon */
+/* Icon wrap */
 .navIconWrap {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #1E1B2E;
+  border: 1.5px solid #2D2A3E;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.2s ease;
   color: inherit;
+  transition: all 0.15s ease;
 }
 
-.navBtn:hover .navIconWrap {
-  background: rgba(255, 255, 255, 0.08);
+.navBtn.active .navIconWrap {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.3);
 }
 
 .navIconWrap.navIconActive {
-  background: rgba(99, 102, 241, 0.35);
-  color: #A5B4FC;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.3);
 }
 
-/* Active bar indicator on right edge */
 .activeIndicator {
   position: absolute;
-  right: 0;
+  right: -2px;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
+  width: 4px;
+  height: 55%;
   border-radius: 2px 0 0 2px;
-  background: linear-gradient(180deg, #818CF8, #6366F1);
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+  background: #FFD60A;
 }
 
 .newTag {
   font-size: 0.55rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  letter-spacing: 0.06em;
+  background: #EF4444;
   color: #FFFFFF;
   padding: 2px 6px;
-  border-radius: 6px;
-  margin-left: auto;
-  margin-right: 8px;
+  border-radius: 4px;
+  border: 1.5px solid #0A0A0A;
+  box-shadow: 1.5px 1.5px 0px #0A0A0A;
+  margin-right: 4px;
 }
 
-/* ── FILTER CHIPS ── */
+/* ── FILTER GUDANG — chip/pill neobrutalism ── */
 .filterHint {
-  font-size: 0.7rem;
-  color: #374151;
-  font-weight: 500;
-  padding: 0 6px 6px;
+  font-size: 0.72rem;
+  color: #4B5563;
+  font-weight: 600;
+  padding: 0 4px 8px;
 }
 
 .filterChips {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
+/* Base chip */
 .chip {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.03);
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 2px solid #2D2A3E;
+  background: #1A1828;
   color: #6B7280;
   font-family: var(--font-head);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.83rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s ease;
   text-align: left;
+  box-shadow: none;
 }
 
 .chip:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: #24213A;
   color: #D1D5DB;
-  transform: translateX(2px);
+  transform: translate(-2px, -2px);
+  box-shadow: 2px 2px 0px #0A0A0A;
+  border-color: #4B4870;
 }
 
 .chip:active {
-  transform: scale(0.98);
+  transform: translate(0, 0);
+  box-shadow: none;
 }
 
-/* ALL chip */
+/* ALL chip — active */
 .chip.chipAll {
-  border-color: rgba(148, 163, 184, 0.4);
-  background: rgba(148, 163, 184, 0.1);
-  color: #E2E8F0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  background: #FFFFFF;
+  color: #0A0A0A;
+  border: 2px solid #0A0A0A;
+  box-shadow: 3px 3px 0px #0A0A0A;
+}
+.chip.chipAll:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #0A0A0A;
+  background: #F4F4F7;
 }
 
-/* FRESH chip */
+/* FRESH chip — active */
 .chip.chipFresh {
-  border-color: rgba(16, 185, 129, 0.5);
-  background: rgba(16, 185, 129, 0.12);
-  color: #6EE7B7;
-  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.2);
+  background: #10B981;
+  color: #FFFFFF;
+  border: 2px solid #0A0A0A;
+  box-shadow: 3px 3px 0px #0A0A0A;
+}
+.chip.chipFresh:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #0A0A0A;
+  background: #059669;
 }
 
-/* DRY chip */
+/* DRY chip — active */
 .chip.chipDry {
-  border-color: rgba(251, 146, 60, 0.5);
-  background: rgba(251, 146, 60, 0.12);
-  color: #FCD34D;
-  box-shadow: 0 2px 12px rgba(251, 146, 60, 0.2);
+  background: #F59E0B;
+  color: #0A0A0A;
+  border: 2px solid #0A0A0A;
+  box-shadow: 3px 3px 0px #0A0A0A;
+}
+.chip.chipDry:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #0A0A0A;
+  background: #D97706;
 }
 
 .chipDot {
   width: 7px;
   height: 7px;
-  border-radius: 50%;
+  border-radius: 2px;
+  border: 1.5px solid currentColor;
   flex-shrink: 0;
 }
 
 .chipCount {
   margin-left: auto;
   font-size: 0.72rem;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 7px;
-  border-radius: 8px;
+  font-weight: 800;
+  background: rgba(0,0,0,0.15);
+  color: inherit;
+  padding: 1px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.2);
 }
 
-.chip.chipFresh .chipCount {
-  background: rgba(16, 185, 129, 0.2);
-  color: #A7F3D0;
+.chip.chipAll .chipCount {
+  background: #0A0A0A;
+  color: #FFFFFF;
+  border-color: transparent;
 }
 
-.chip.chipDry .chipCount {
-  background: rgba(251, 146, 60, 0.2);
-  color: #FDE68A;
-}
-
-/* ── FOOTER / ADMIN GROUP ── */
+/* ── ADMIN FOOTER ── */
 .footerGroup {
   display: flex;
   flex-direction: column;
   padding: 14px 12px;
-  gap: 3px;
+  gap: 4px;
   margin-top: auto;
+  border-top: 2px solid #0A0A0A;
+  background: #0D0C1A;
 }
 
 .adminPill {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 8px 4px 0;
-  padding: 6px 12px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  border-radius: 20px;
+  margin: 8px 2px 0;
+  padding: 7px 12px;
+  background: #10B981;
+  border: 2px solid #0A0A0A;
+  box-shadow: 2px 2px 0px #0A0A0A;
+  border-radius: 6px;
   font-size: 0.7rem;
-  font-weight: 700;
-  color: #34D399;
+  font-weight: 800;
+  color: #FFFFFF;
   letter-spacing: 0.02em;
 }
 
 .onlineDot {
-  width: 6px;
-  height: 6px;
-  background: #10B981;
+  width: 7px;
+  height: 7px;
+  background: #FFFFFF;
+  border: 1.5px solid #0A0A0A;
   border-radius: 50%;
-  box-shadow: 0 0 6px #10B981;
   animation: pulseDot 1.8s ease-in-out infinite;
 }
 
@@ -339,7 +363,7 @@
   50% { opacity: 0.6; transform: scale(1.5); }
 }
 
-/* ── HAMBURGER (mobile) ── */
+/* ── HAMBURGER (mobile only) ── */
 .hamburger {
   display: none;
 }
@@ -357,42 +381,52 @@
     width: 42px;
     height: 42px;
     padding: 9px;
-    background: #0D0C1A;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    background: #11101D;
+    border: 2px solid #0A0A0A;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-    transition: all 0.2s ease;
+    box-shadow: 3px 3px 0px #0A0A0A;
+    transition: all 0.15s ease;
+  }
+
+  .hamburger:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #0A0A0A;
+  }
+
+  .hamburger:active {
+    transform: translate(0, 0);
+    box-shadow: none;
   }
 
   .hamburger span {
     display: block;
     width: 100%;
-    height: 2px;
+    height: 2.5px;
     background: #FFFFFF;
     border-radius: 2px;
-    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     transform-origin: center;
   }
 
   /* Hamburger → X animation */
   .hamburgerOpen span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
+    transform: translateY(7.5px) rotate(45deg);
   }
   .hamburgerOpen span:nth-child(2) {
     opacity: 0;
     transform: scaleX(0);
   }
   .hamburgerOpen span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
+    transform: translateY(-7.5px) rotate(-45deg);
   }
 
+  /* Overlay */
   .overlay {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 199;
     animation: fadeIn 0.2s ease;
   }
@@ -402,6 +436,7 @@
     to { opacity: 1; }
   }
 
+  /* Slide-in drawer */
   .sidebar {
     position: fixed;
     top: 0;
@@ -410,13 +445,13 @@
     height: 100vh;
     z-index: 200;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: none;
   }
 
   .sidebarOpen {
     transform: translateX(0);
-    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 6px 0 0px #0A0A0A;
   }
 }
 
