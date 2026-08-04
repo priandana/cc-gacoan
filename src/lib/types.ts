@@ -71,13 +71,13 @@ export const DEFAULT_DRY_COL_MAPPING: ColMapping = {
 
 
 export const DEFAULT_CONFIG: SheetConfig = {
-  apiKey: '',
-  freshSpreadsheetId: '',
-  drySpreadsheetId: '',
-  freshRowStart: 6,
-  dryRowStart: 7,
-  freshColRange: 'A:P',
-  dryColRange: 'A:P',
+  apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || '',
+  freshSpreadsheetId: process.env.NEXT_PUBLIC_FRESH_SPREADSHEET_ID || '',
+  drySpreadsheetId: process.env.NEXT_PUBLIC_DRY_SPREADSHEET_ID || '',
+  freshRowStart: Number(process.env.NEXT_PUBLIC_FRESH_ROW_START) || 6,
+  dryRowStart: Number(process.env.NEXT_PUBLIC_DRY_ROW_START) || 7,
+  freshColRange: process.env.NEXT_PUBLIC_FRESH_COL_RANGE || 'A:P',
+  dryColRange: process.env.NEXT_PUBLIC_DRY_COL_RANGE || 'A:P',
   freshColMapping: DEFAULT_FRESH_COL_MAPPING,
   dryColMapping: DEFAULT_DRY_COL_MAPPING,
 };

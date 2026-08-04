@@ -19,7 +19,9 @@ export function loadConfig(): SheetConfig {
     return {
       ...DEFAULT_CONFIG,
       ...saved,
-      // Pastikan freshColMapping & dryColMapping selalu ada
+      apiKey: saved.apiKey || DEFAULT_CONFIG.apiKey,
+      freshSpreadsheetId: saved.freshSpreadsheetId || DEFAULT_CONFIG.freshSpreadsheetId,
+      drySpreadsheetId: saved.drySpreadsheetId || DEFAULT_CONFIG.drySpreadsheetId,
       freshColMapping: { ...DEFAULT_FRESH_COL_MAPPING, ...(saved.freshColMapping || {}) },
       dryColMapping: { ...DEFAULT_DRY_COL_MAPPING, ...(saved.dryColMapping || {}) },
     };
