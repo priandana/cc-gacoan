@@ -3,7 +3,7 @@
   border: 2.5px solid #0A0A0A;
   border-radius: 16px;
   box-shadow: 5px 5px 0px #0A0A0A;
-  overflow: hidden;
+  overflow: hidden; /* outer overflow hidden is fine, inner tableScroll handles x-scroll */
 }
 
 /* HEADER BAR */
@@ -261,6 +261,7 @@
 /* SCROLLABLE MATRIX TABLE */
 .tableScroll {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
   max-height: 65vh;
   width: 100%;
 }
@@ -418,7 +419,6 @@
   color: #0A0A0A;
 }
 
-/* FOOTER BAR */
 .footerBar {
   padding: 14px 24px;
   background: #FFFBE6;
@@ -430,4 +430,72 @@
   font-family: var(--font-head);
   font-weight: 800;
   color: #0A0A0A;
+  flex-wrap: wrap;
+  gap: 8px;
 }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .headerBar {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .searchBox {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .sourceToggle {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .toggleBtn {
+    flex: 1;
+    text-align: center;
+    padding: 6px 8px;
+    font-size: 0.72rem;
+  }
+
+  /* Make sticky columns narrower on mobile */
+  .stickyColSku {
+    min-width: 80px;
+  }
+
+  .stickyColDesc {
+    left: 80px;
+    min-width: 160px;
+  }
+
+  .colDayHeader {
+    min-width: 55px;
+  }
+
+  .table thead th {
+    padding: 9px 8px;
+    font-size: 0.68rem;
+  }
+
+  .table tbody td {
+    padding: 9px 8px;
+    font-size: 0.82rem;
+  }
+
+  .footerBar {
+    padding: 10px 14px;
+    font-size: 0.78rem;
+  }
+
+  .tableScroll {
+    max-height: 60vh;
+  }
+
+  .exportBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
