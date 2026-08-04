@@ -13,6 +13,17 @@ export interface ExportRow {
 /**
  * Helper to build one styled worksheet inside the Excel workbook
  */
+/** Convert 1-based column index to Excel letter (A, B, ..., Z, AA, AB, ...) */
+function colIndexToLetter(n: number): string {
+  let result = '';
+  while (n > 0) {
+    const rem = (n - 1) % 26;
+    result = String.fromCharCode(65 + rem) + result;
+    n = Math.floor((n - 1) / 26);
+  }
+  return result;
+}
+
 function buildWorksheet(
   workbook: ExcelJS.Workbook,
   sheetTitle: string,
@@ -222,9 +233,9 @@ function buildWorksheet(
   labelCell.font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF0A0A0A' } };
   labelCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-  days.forEach((d, idx) => {
+  days.forEach((_d, idx) => {
     const colIdx = 5 + idx;
-    const colLetter = String.fromCharCode(68 + idx + 1);
+    const colLetter = colIndexToLetter(colIdx);
     const cell = totalRow.getCell(colIdx);
     cell.value = { formula: `SUM(${colLetter}7:${colLetter}${totalRowNumber - 1})` };
     cell.numFmt = '#,##0';
@@ -277,23 +288,23 @@ export async function exportMatrixToExcel(
 
   if (isAll) {
     // 1. Sheet 1: ALL Combined Summary
-    buildWorksheet(workbook, '📊 SUMMARY ALL GUDANG', 'FFD60A', 'FFD60A', rows, selectedDate);
+    buildWorksheet(workbook, 'SUMMARY ALL GUDANG', 'FFD60A', 'FFD60A', rows, selectedDate);
 
     // 2. Sheet 2: WH FRESH
     const freshRows = rows.filter(r => r.source === 'fresh' || !r.source);
     if (freshRows.length > 0) {
-      buildWorksheet(workbook, '🧊 WH FRESH', '38BDF8', '38BDF8', freshRows, selectedDate);
+      buildWorksheet(workbook, 'WH FRESH', '38BDF8', '38BDF8', freshRows, selectedDate);
     }
 
     // 3. Sheet 3: WH DRY
     const dryRows = rows.filter(r => r.source === 'dry' || !r.source);
     if (dryRows.length > 0) {
-      buildWorksheet(workbook, '📦 WH DRY', 'FB923C', 'FB923C', dryRows, selectedDate);
+      buildWorksheet(workbook, 'WH DRY', 'FB923C', 'FB923C', dryRows, selectedDate);
     }
   } else if (isFresh) {
-    buildWorksheet(workbook, '🧊 WH FRESH', '38BDF8', '38BDF8', rows, selectedDate);
+    buildWorksheet(workbook, 'WH FRESH', '38BDF8', '38BDF8', rows, selectedDate);
   } else if (isDry) {
-    buildWorksheet(workbook, '📦 WH DRY', 'FB923C', 'FB923C', rows, selectedDate);
+    buildWorksheet(workbook, 'WH DRY', 'FB923C', 'FB923C', rows, selectedDate);
   } else {
     buildWorksheet(workbook, 'AKUMULASI STOK', 'FFD60A', 'FFD60A', rows, selectedDate);
   }
