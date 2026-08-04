@@ -41,7 +41,6 @@ export default function SummaryTable({
 
   const days = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
-  // Sync manual jika pengguna menekan tombol sync
   const handleSyncAllDates = async () => {
     if (!config.apiKey || isSyncingAll) return;
     setIsSyncingAll(true);
@@ -60,18 +59,14 @@ export default function SummaryTable({
       } catch (e) {
         console.warn(`[SummaryTable] Date ${d} manual sync notice:`, e);
       }
-
       setSyncedCount(d);
       await new Promise(r => setTimeout(r, 150));
     }
-
     setIsSyncingAll(false);
   };
 
-  // Combine initialItems, allDateDataMap from initial sync, and manualSyncedData
   const summaryRows = useMemo(() => {
     const map = new Map<string, SkuSummaryRow>();
-
     const combinedMap: Record<number, CycleItem[]> = {
       ...allDateDataMap,
       ...manualSyncedData,
@@ -84,7 +79,6 @@ export default function SummaryTable({
 
       for (const item of items) {
         if (sourceFilter !== 'all' && item.source !== sourceFilter) continue;
-
         const key = item.sku || item.desc;
         if (!key) continue;
 
@@ -100,17 +94,11 @@ export default function SummaryTable({
         }
 
         const row = map.get(key)!;
-        if (item.desc && (row.desc === '—' || !row.desc)) {
-          row.desc = item.desc;
-        }
-
+        if (item.desc && (row.desc === '—' || !row.desc)) row.desc = item.desc;
         row.qtyByDate[dateNum] = (row.qtyByDate[dateNum] || 0) + item.qty;
         row.totalQty += item.qty;
-
-        if (item.expDate && item.expDate !== '—') {
-          if (row.expTerdekat === '—') {
-            row.expTerdekat = item.expDate;
-          }
+        if (item.expDate && item.expDate !== '—' && row.expTerdekat === '—') {
+          row.expTerdekat = item.expDate;
         }
       }
     }
@@ -118,7 +106,6 @@ export default function SummaryTable({
     return Array.from(map.values()).sort((a, b) => a.sku.localeCompare(b.sku));
   }, [initialItems, allDateDataMap, manualSyncedData, selectedDate, sourceFilter]);
 
-  // Search filter
   const filteredRows = useMemo(() => {
     if (!search.trim()) return summaryRows;
     const q = search.toLowerCase();
@@ -137,7 +124,6 @@ export default function SummaryTable({
       ? 'WH FRESH'
       : 'WH DRY';
 
-  // Export Excel Handler
   const handleExportExcel = async () => {
     setIsExporting(true);
     try {
@@ -161,112 +147,125 @@ export default function SummaryTable({
 
   return (
     <div className={styles.wrapper}>
-      {/* Header Bar */}
+
+      {/* ── HEADER BAR ── */}
       <div className={styles.headerBar}>
+        {/* Title */}
         <div className={styles.titleGroup}>
           <span className={styles.icon}>📊</span>
           <div>
-            <h2>Akumulasi SKU & Expired — {sourceBadgeLabel}</h2>
+            <h2 className={styles.title}>Akumulasi SKU &amp; Expired — {sourceBadgeLabel}</h2>
             <p className={styles.subText}>
-              Matriks stok harian per tanggal 1 - 31 Agustus 2026
+              Matriks stok harian · 1–31 Agustus 2026 · <strong>{filteredRows.length}</strong> SKU ditampilkan
             </p>
           </div>
         </div>
 
-        {/* Sync & Export & Source Filter Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          {/* EXPORT EXCEL BUTTON */}
-          <button
-            className={`${styles.exportBtn} ${isExporting ? styles.exporting : ''}`}
-            onClick={handleExportExcel}
-            disabled={isExporting || filteredRows.length === 0}
-            title="Download Laporan Format Excel Rapi untuk Customer"
-          >
-            <span className={styles.exportIcon}>📊</span>
-            <span>{isExporting ? 'Mengexport Excel...' : 'Export ke Excel (.xlsx)'}</span>
-          </button>
+        {/* Actions */}
+        <div className={styles.actionsRow}>
 
-          <button
-            className={styles.syncBtn}
-            onClick={handleSyncAllDates}
-            disabled={isSyncingAll}
-            title="Refresh sync data semua tanggal 1-31"
-          >
-            {isSyncingAll ? (
-              <span>⏳ Sync Tgl {syncedCount}/31...</span>
-            ) : (
-              <span>🔄 Refresh Sync (1-31)</span>
-            )}
-          </button>
+          {/* Button group: Export + Sync */}
+          <div className={styles.btnGroup}>
+            <button
+              className={`${styles.exportBtn} ${isExporting ? styles.exporting : ''}`}
+              onClick={handleExportExcel}
+              disabled={isExporting || filteredRows.length === 0}
+              title="Download Laporan Excel"
+            >
+              <span className={styles.exportIcon}>📊</span>
+              <span>{isExporting ? 'Mengexport...' : 'Export Excel'}</span>
+            </button>
 
+            <button
+              className={styles.syncBtn}
+              onClick={handleSyncAllDates}
+              disabled={isSyncingAll}
+              title="Refresh semua tanggal 1-31"
+            >
+              {isSyncingAll
+                ? <span>⏳ {syncedCount}/31</span>
+                : <span>🔄 Refresh (1–31)</span>
+              }
+            </button>
+          </div>
+
+          {/* Source toggle */}
           {onSetSource && (
             <div className={styles.sourceToggle}>
               <button
                 className={`${styles.toggleBtn} ${sourceFilter === 'all' ? styles.toggleActive : ''}`}
                 onClick={() => onSetSource('all')}
-              >
-                ALL
-              </button>
+              >ALL</button>
               <button
                 className={`${styles.toggleBtn} ${sourceFilter === 'fresh' ? styles.toggleActiveFresh : ''}`}
                 onClick={() => onSetSource('fresh')}
-              >
-                🧊 WH FRESH
-              </button>
+              >🧊 FRESH</button>
               <button
                 className={`${styles.toggleBtn} ${sourceFilter === 'dry' ? styles.toggleActiveDry : ''}`}
                 onClick={() => onSetSource('dry')}
-              >
-                📦 WH DRY
-              </button>
+              >📦 DRY</button>
             </div>
           )}
-        </div>
 
-        {/* Search Box */}
-        <div className={styles.searchBox}>
-          <span className={styles.searchIcon}>🔍</span>
-          <input
-            type="text"
-            placeholder="Cari Kode / Produk / Exp Date..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && <button className={styles.clearBtn} onClick={() => setSearch('')}>✕</button>}
+          {/* Search */}
+          <div className={styles.searchBox}>
+            <span className={styles.searchIcon}>🔍</span>
+            <input
+              type="text"
+              placeholder="Cari SKU / Produk / Exp Date..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            {search && (
+              <button className={styles.clearBtn} onClick={() => setSearch('')}>✕</button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Matrix Table */}
+      {/* ── MOBILE SCROLL HINT ── */}
+      <div className={styles.scrollHint}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Geser tabel untuk melihat semua tanggal
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+
+      {/* ── MATRIX TABLE ── */}
       <div className={styles.tableScroll}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.stickyColSku}>SKU</th>
-              <th className={styles.stickyColDesc}>DESKRIPSI</th>
-              <th className={styles.colExpHeader}>EXP TERDEKAT</th>
+              <th className={`${styles.stickyColSku} ${styles.thHead}`}>SKU</th>
+              <th className={`${styles.stickyColDesc} ${styles.thHead}`}>DESKRIPSI</th>
+              <th className={`${styles.colExpHeader} ${styles.thHead}`}>EXP</th>
               {days.map(d => (
                 <th
                   key={d}
-                  className={`${styles.colDayHeader} ${d === selectedDate ? styles.currentDayHeader : ''}`}
+                  className={`${styles.thHead} ${styles.colDayHeader} ${d === selectedDate ? styles.currentDayHeader : ''}`}
                 >
-                  {d} AGUSTUS
+                  <span className={styles.dayNum}>{d}</span>
+                  <span className={styles.dayLabel}> AGS</span>
                 </th>
               ))}
+              <th className={`${styles.thHead} ${styles.colTotalHeader}`}>TOTAL</th>
             </tr>
           </thead>
           <tbody>
             {filteredRows.length === 0 ? (
               <tr>
-                <td colSpan={34} className={styles.emptyText}>
-                  Tidak ada data akumulasi SKU untuk filter {sourceBadgeLabel}.
+                <td colSpan={35} className={styles.emptyCell}>
+                  <div className={styles.emptyInner}>
+                    <span>🔍</span>
+                    <strong>Tidak ada data</strong>
+                    <span>Tidak ada akumulasi SKU untuk filter <em>{sourceBadgeLabel}</em></span>
+                  </div>
                 </td>
               </tr>
             ) : (
               filteredRows.map((row, idx) => {
                 const expInfo = formatExpDate(row.expTerdekat);
-
                 return (
-                  <tr key={`${row.sku}-${idx}`}>
+                  <tr key={`${row.sku}-${idx}`} className={styles.dataRow}>
                     <td className={styles.stickyColSku}>
                       <span className={styles.skuBadge}>{row.sku}</span>
                     </td>
@@ -291,18 +290,19 @@ export default function SummaryTable({
                       return (
                         <td
                           key={d}
-                          className={`${styles.colDayVal} ${
-                            d === selectedDate ? styles.currentDayCell : ''
-                          }`}
+                          className={`${styles.colDayVal} ${d === selectedDate ? styles.currentDayCell : ''}`}
                         >
                           {qty > 0 ? (
                             <span className={styles.qtyPos}>{qty.toLocaleString('id-ID')}</span>
                           ) : (
-                            <span className={styles.qtyZero}>0</span>
+                            <span className={styles.qtyZero}>—</span>
                           )}
                         </td>
                       );
                     })}
+                    <td className={styles.colTotalVal}>
+                      <span className={styles.totalBadge}>{row.totalQty.toLocaleString('id-ID')}</span>
+                    </td>
                   </tr>
                 );
               })
@@ -311,15 +311,17 @@ export default function SummaryTable({
         </table>
       </div>
 
-      {/* Footer Bar */}
+      {/* ── FOOTER ── */}
       <div className={styles.footerBar}>
         <span>
-          Menampilkan <strong>{filteredRows.length} SKU</strong> ({sourceBadgeLabel})
+          Menampilkan <strong>{filteredRows.length} SKU</strong>
+          {search && ` · pencarian "${search}"`}
         </span>
-        <span>
-          Terhubung {activeConnectedDaysCount} Hari Stok (1 - 31 Agustus 2026)
+        <span className={styles.footerRight}>
+          {activeConnectedDaysCount} hari stok terhubung · 1–31 Agustus 2026
         </span>
       </div>
+
     </div>
   );
 }

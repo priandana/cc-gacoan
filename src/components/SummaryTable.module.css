@@ -1,51 +1,72 @@
+/* =================================================
+   SUMMARY TABLE — Neobrutalism + Fully Responsive
+   ================================================= */
+
+/* ── WRAPPER ── */
 .wrapper {
   background: #FFFFFF;
   border: 2.5px solid #0A0A0A;
   border-radius: 16px;
   box-shadow: 5px 5px 0px #0A0A0A;
-  overflow: hidden; /* outer overflow hidden is fine, inner tableScroll handles x-scroll */
+  overflow: hidden;
 }
 
-/* HEADER BAR */
+/* ── HEADER BAR ── */
 .headerBar {
-  padding: 18px 24px;
+  padding: 16px 20px;
   background: #FFFBE6;
   border-bottom: 2.5px solid #0A0A0A;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .titleGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  flex-shrink: 0;
 }
 
-.titleGroup h2 {
+.title {
   font-family: var(--font-head);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: #0A0A0A;
   margin: 0;
+  line-height: 1.3;
 }
 
 .subText {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: #4B5563;
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
-/* EXPORT EXCEL BUTTON */
+/* ── ACTIONS ROW ── */
+.actionsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── BUTTON GROUP (Export + Sync side-by-side) ── */
+.btnGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* EXPORT BUTTON */
 .exportBtn {
-  background: linear-gradient(135deg, #059669, #10B981);
+  background: #059669;
   color: #FFFFFF;
   border: 2.5px solid #0A0A0A;
   border-radius: 10px;
@@ -53,20 +74,19 @@
   font-family: var(--font-head);
   font-size: 0.8rem;
   font-weight: 800;
-  padding: 8px 16px;
+  padding: 8px 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-  overflow: hidden;
+  gap: 7px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .exportBtn:hover:not(:disabled) {
   transform: translate(-2px, -2px);
   box-shadow: 5px 5px 0px #0A0A0A;
-  background: linear-gradient(135deg, #047857, #059669);
+  background: #047857;
 }
 
 .exportBtn:active:not(:disabled) {
@@ -75,25 +95,22 @@
 }
 
 .exportBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
-  transform: none;
 }
 
-.exportIcon {
-  font-size: 1rem;
-}
+.exportIcon { font-size: 0.95rem; }
 
 .exporting {
-  animation: pulseExport 1s ease-in-out infinite alternate;
+  animation: pulseExport 0.9s ease-in-out infinite alternate;
 }
 
 @keyframes pulseExport {
-  from { opacity: 0.8; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1.02); }
+  from { opacity: 0.7; transform: scale(0.99); }
+  to   { opacity: 1;   transform: scale(1.01); }
 }
 
-
+/* SYNC BUTTON */
 .syncBtn {
   background: #34D399;
   color: #0A0A0A;
@@ -105,23 +122,25 @@
   font-weight: 800;
   padding: 8px 14px;
   cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .syncBtn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px #0A0A0A;
   background: #10B981;
   color: #FFFFFF;
-  transform: translate(-1.5px, -1.5px);
-  box-shadow: 4px 4px 0px #0A0A0A;
 }
 
-.syncBtn:disabled {
-  opacity: 0.7;
-  cursor: wait;
+.syncBtn:active:not(:disabled) {
+  transform: translate(0, 0);
+  box-shadow: none;
 }
 
+.syncBtn:disabled { opacity: 0.7; cursor: wait; }
 
-/* SOURCE TOGGLE PILLS */
+/* SOURCE TOGGLE */
 .sourceToggle {
   display: flex;
   align-items: center;
@@ -129,27 +148,26 @@
   border: 2.5px solid #0A0A0A;
   border-radius: 12px;
   padding: 3px;
-  gap: 4px;
+  gap: 3px;
   box-shadow: 2.5px 2.5px 0px #0A0A0A;
+  flex-shrink: 0;
 }
 
 .toggleBtn {
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-family: var(--font-head);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 800;
   border: 1.5px solid transparent;
   border-radius: 8px;
   background: transparent;
   color: #4B5563;
   cursor: pointer;
-  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.toggleBtn:hover {
-  color: #0A0A0A;
-  background: #F1F5F9;
-}
+.toggleBtn:hover { color: #0A0A0A; background: #F1F5F9; }
 
 .toggleActive {
   background: #FFD60A !important;
@@ -172,6 +190,7 @@
   box-shadow: 1.5px 1.5px 0px #0A0A0A;
 }
 
+/* SEARCH BOX */
 .searchBox {
   display: flex;
   align-items: center;
@@ -179,24 +198,23 @@
   border: 2.5px solid #0A0A0A;
   border-radius: 10px;
   overflow: hidden;
-  min-width: 280px;
+  min-width: 240px;
+  flex: 1;
   box-shadow: 3px 3px 0px #0A0A0A;
 }
 
-.searchIcon {
-  padding: 0 12px;
-  font-size: 0.9rem;
-}
+.searchIcon { padding: 0 10px; font-size: 0.9rem; }
 
 .searchBox input {
   border: none;
   background: transparent;
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
   padding: 9px 8px 9px 0;
   outline: none;
   width: 100%;
+  color: #0A0A0A;
 }
 
 .clearBtn {
@@ -205,297 +223,425 @@
   padding: 0 12px;
   cursor: pointer;
   font-weight: 800;
+  color: #6B7280;
+  font-size: 0.9rem;
 }
 
-/* BEAUTIFUL CENTERED LOADING STATE */
-.loadingState {
-  padding: 75px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  text-align: center;
-  background: #FFFFFF;
+.clearBtn:hover { color: #0A0A0A; }
+
+/* ── MOBILE SCROLL HINT ── */
+.scrollHint {
+  display: none; /* hidden on desktop */
 }
 
-.bouncingLoader {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.bounceBlock {
-  width: 22px;
-  height: 22px;
-  border: 2.5px solid #0A0A0A;
-  border-radius: 6px;
-  box-shadow: 2px 2px 0px #0A0A0A;
-  animation: blockBounce 0.6s ease-in-out infinite alternate;
-}
-
-.bounceBlock:nth-child(1) { background: #FFD60A; animation-delay: 0s; }
-.bounceBlock:nth-child(2) { background: #38BDF8; animation-delay: 0.15s; }
-.bounceBlock:nth-child(3) { background: #34D399; animation-delay: 0.3s; }
-.bounceBlock:nth-child(4) { background: #818CF8; animation-delay: 0.45s; }
-
-@keyframes blockBounce {
-  from { transform: translateY(0); }
-  to { transform: translateY(-18px); }
-}
-
-.loadingText {
-  font-family: var(--font-head);
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: #0A0A0A;
-}
-
-.loadingSub {
-  color: #4B5563;
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-/* SCROLLABLE MATRIX TABLE */
+/* ── TABLE SCROLL WRAPPER ── */
 .tableScroll {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch; /* smooth momentum scroll on iOS */
+  -webkit-overflow-scrolling: touch;
   max-height: 65vh;
   width: 100%;
+  /* CSS scroll shadow — shows when content overflows */
+  background:
+    linear-gradient(to right, #FFFFFF 20px, transparent) left  center / 40px 100% no-repeat local,
+    linear-gradient(to left,  #FFFFFF 20px, transparent) right center / 40px 100% no-repeat local,
+    radial-gradient(ellipse at 0%   50%, rgba(0,0,0,.10), transparent 70%) left  center / 20px 100% no-repeat scroll,
+    radial-gradient(ellipse at 100% 50%, rgba(0,0,0,.10), transparent 70%) right center / 20px 100% no-repeat scroll;
 }
 
+/* ── TABLE ── */
 .table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   font-family: var(--font-body);
-  border: 2px solid #0A0A0A;
 }
 
+/* ── THEAD ── */
 .table thead {
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+/* Base TH */
+.thHead {
+  padding: 11px 12px;
+  text-align: left;
+  font-family: var(--font-head);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-bottom: 2.5px solid #0A0A0A;
+  border-right: 1.5px solid rgba(10,10,10,0.2);
+  white-space: nowrap;
+  color: #0A0A0A;
   background: #FFD60A;
 }
 
-.table thead th {
-  padding: 12px 14px;
-  text-align: left;
-  font-family: var(--font-head);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border-bottom: 2.5px solid #0A0A0A;
-  border-right: 2px solid #0A0A0A;
-  white-space: nowrap;
-  color: #0A0A0A;
-}
-
+/* ── STICKY COLUMN: SKU ── */
 .stickyColSku {
   position: sticky;
   left: 0;
-  background: #FFFFFF;
-  z-index: 12;
-  min-width: 110px;
-  border-right: 2px solid #0A0A0A !important;
+  z-index: 12; /* bumped in thead via thHead+stickyColSku combo */
+  width: 105px;
+  min-width: 105px;
+  max-width: 105px;
+  border-right: 2.5px solid #0A0A0A !important;
+  background: #FFD60A; /* default for thead - body overrides below */
 }
 
+/* Thead sticky cols keep yellow */
+.thHead.stickyColSku,
+.thHead.stickyColDesc {
+  z-index: 22;
+  background: #FFD60A;
+}
+
+/* Body sticky cols = white */
+.table tbody .stickyColSku {
+  background: #FFFFFF;
+  z-index: 5;
+}
+.table tbody tr:nth-child(even) .stickyColSku { background: #FAFAFA; }
+.table tbody tr:hover .stickyColSku          { background: #DBEAFE !important; }
+
+/* ── STICKY COLUMN: DESKRIPSI ── */
 .stickyColDesc {
   position: sticky;
-  left: 110px;
-  background: #FFFFFF;
+  left: 105px;
   z-index: 12;
-  min-width: 250px;
+  min-width: 210px;
   border-right: 2.5px solid #0A0A0A !important;
+  background: #FFD60A;
 }
 
+.table tbody .stickyColDesc {
+  background: #FFFFFF;
+  z-index: 5;
+}
+.table tbody tr:nth-child(even) .stickyColDesc { background: #FAFAFA; }
+.table tbody tr:hover .stickyColDesc           { background: #DBEAFE !important; }
+
+/* ── EXP DATE COLUMN ── */
 .colExpHeader {
-  color: #0A0A0A !important;
-  min-width: 130px;
+  min-width: 115px;
   border-right: 2px solid #0A0A0A !important;
 }
 
+.colExp {
+  padding: 9px 12px;
+  vertical-align: middle;
+  border-bottom: 1.5px solid #E5E7EB;
+  border-right: 2px solid #E5E7EB;
+}
+
+/* ── DAY COLUMNS ── */
 .colDayHeader {
   text-align: center !important;
-  min-width: 75px;
+  min-width: 68px;
 }
 
 .currentDayHeader {
   background: #38BDF8 !important;
-  color: #0A0A0A !important;
 }
 
-/* ROWS & CELLS */
-.table tbody tr {
-  border-bottom: 2px solid #0A0A0A;
+.dayNum {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 900;
 }
 
-.table tbody tr:nth-child(even) {
-  background: #FAFAFA;
+.dayLabel {
+  font-size: 0.56rem;
+  font-weight: 700;
+  opacity: 0.65;
+  display: block;
+  letter-spacing: 0.04em;
 }
 
-.table tbody tr:hover {
-  background: #E0F2FE !important;
+/* ── TOTAL COLUMN (sticky right) ── */
+.colTotalHeader {
+  text-align: center !important;
+  min-width: 78px;
+  border-left: 2.5px solid #0A0A0A !important;
+  border-right: none !important;
+  background: #0A0A0A !important;
+  color: #FFD60A !important;
+  position: sticky;
+  right: 0;
+  z-index: 22;
 }
+
+.colTotalVal {
+  text-align: center !important;
+  border-left: 2px solid #D1D5DB;
+  position: sticky;
+  right: 0;
+  z-index: 5;
+  background: #FFFDE7;
+  padding: 9px 12px;
+  vertical-align: middle;
+  border-bottom: 1.5px solid #E5E7EB;
+}
+
+.table tbody tr:nth-child(even) .colTotalVal { background: #FFFBCC; }
+.table tbody tr:hover .colTotalVal           { background: #FEF9C3 !important; }
+
+/* ── ROW BASE STYLES ── */
+.dataRow { transition: background 0.1s ease; }
 
 .table tbody td {
-  padding: 11px 14px;
+  padding: 9px 12px;
   vertical-align: middle;
-  border-right: 2px solid #0A0A0A;
+  border-bottom: 1.5px solid #E5E7EB;
+  border-right: 1px solid #F3F4F6;
 }
 
-.skuBadge {
-  font-weight: 800;
-  font-family: var(--font-body);
-  color: #0A0A0A;
-  background: #FFFFFF;
-  border: 1.5px solid #0A0A0A;
-  border-radius: 6px;
-  padding: 3px 8px;
-  display: inline-block;
-  box-shadow: 1.5px 1.5px 0px #0A0A0A;
-}
+.table tbody tr:nth-child(even) td { background: #FAFAFA; }
+.table tbody tr:hover td           { background: #DBEAFE !important; }
 
-.descText {
-  font-weight: 800;
-  color: #0A0A0A;
-  font-size: 0.9rem;
-}
-
-.expRed {
-  color: #0A0A0A;
-  background: #F87171;
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1.5px solid #0A0A0A;
-  font-weight: 800;
-  display: inline-block;
-}
-
-.expOrange {
-  color: #0A0A0A;
-  background: #FB923C;
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1.5px solid #0A0A0A;
-  font-weight: 800;
-  display: inline-block;
-}
-
-.expNormal {
-  color: #0A0A0A;
-  font-weight: 700;
-}
-
+/* ── DATA CELL STYLES ── */
 .colDayVal {
   text-align: center !important;
 }
 
 .currentDayCell {
-  background: #E0F2FE !important;
+  background: #EFF6FF !important;
+}
+
+.table tbody tr:hover .currentDayCell { background: #BFDBFE !important; }
+
+/* ── BADGES & LABELS ── */
+.skuBadge {
+  font-weight: 800;
+  font-family: var(--font-head);
+  font-size: 0.78rem;
+  color: #0A0A0A;
+  background: #FFFFFF;
+  border: 2px solid #0A0A0A;
+  border-radius: 6px;
+  padding: 3px 7px;
+  display: inline-block;
+  box-shadow: 2px 2px 0px #0A0A0A;
+  white-space: nowrap;
+}
+
+.descText {
+  font-weight: 700;
+  color: #111827;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.expRed {
+  color: #FFFFFF;
+  background: #EF4444;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1.5px solid #0A0A0A;
+  font-weight: 800;
+  font-size: 0.75rem;
+  display: inline-block;
+  white-space: nowrap;
+  box-shadow: 1.5px 1.5px 0px #0A0A0A;
+}
+
+.expOrange {
+  color: #0A0A0A;
+  background: #FB923C;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1.5px solid #0A0A0A;
+  font-weight: 800;
+  font-size: 0.75rem;
+  display: inline-block;
+  white-space: nowrap;
+  box-shadow: 1.5px 1.5px 0px #0A0A0A;
+}
+
+.expNormal {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.8rem;
 }
 
 .qtyPos {
   font-weight: 800;
   color: #0A0A0A;
   font-family: var(--font-head);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
 }
 
 .qtyZero {
-  color: #EF4444;
-  font-weight: 800;
-  opacity: 0.6;
+  color: #D1D5DB;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
-.emptyText {
-  padding: 60px;
-  text-align: center;
-  font-weight: 800;
+.totalBadge {
+  font-weight: 900;
+  font-family: var(--font-head);
+  font-size: 0.9rem;
   color: #0A0A0A;
 }
 
+/* ── EMPTY STATE ── */
+.emptyCell {
+  background: #FFFFFF;
+}
+
+.emptyInner {
+  padding: 60px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.emptyInner span:first-child { font-size: 2rem; }
+.emptyInner strong { color: #0A0A0A; font-family: var(--font-head); font-size: 1rem; }
+
+/* ── FOOTER ── */
 .footerBar {
-  padding: 14px 24px;
+  padding: 12px 20px;
   background: #FFFBE6;
   border-top: 2.5px solid #0A0A0A;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   font-family: var(--font-head);
-  font-weight: 800;
+  font-weight: 700;
   color: #0A0A0A;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
-/* ===== MOBILE RESPONSIVE ===== */
+.footerRight { color: #4B5563; }
+
+/* =============================================
+   MOBILE RESPONSIVE ≤ 768px
+   ============================================= */
 @media (max-width: 768px) {
-  .headerBar {
-    padding: 12px 14px;
+
+  /* HEADER */
+  .headerBar { padding: 12px 14px; gap: 10px; }
+
+  .title { font-size: 0.9rem; }
+  .subText { font-size: 0.68rem; }
+
+  /* ACTIONS STACK VERTICALLY */
+  .actionsRow {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .searchBox {
-    min-width: auto;
-    width: 100%;
+  /* BUTTON GROUP → 2 equal columns */
+  .btnGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 
-  .sourceToggle {
+  .exportBtn, .syncBtn {
     width: 100%;
-    justify-content: stretch;
+    justify-content: center;
+    font-size: 0.74rem;
+    padding: 9px 8px;
   }
+
+  /* SOURCE TOGGLE → full width, 3 equal */
+  .sourceToggle { width: 100%; }
 
   .toggleBtn {
     flex: 1;
     text-align: center;
-    padding: 6px 8px;
-    font-size: 0.72rem;
+    padding: 7px 4px;
+    font-size: 0.68rem;
   }
 
-  /* Make sticky columns narrower on mobile */
+  /* SEARCH → full width */
+  .searchBox {
+    min-width: 0;
+    width: 100%;
+    flex: none;
+  }
+
+  /* SCROLL HINT → show on mobile */
+  .scrollHint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: var(--font-head);
+    color: #6B7280;
+    background: #F9FAFB;
+    border-bottom: 1.5px solid #E5E7EB;
+  }
+
+  /* TABLE HEIGHT */
+  .tableScroll { max-height: 52vh; }
+
+  /* NARROWER STICKY COLS ON MOBILE */
   .stickyColSku {
+    width: 80px;
     min-width: 80px;
+    max-width: 80px;
   }
 
   .stickyColDesc {
     left: 80px;
-    min-width: 160px;
+    min-width: 140px;
   }
 
+  /* NARROWER DAY COLUMNS */
   .colDayHeader {
-    min-width: 55px;
+    min-width: 48px;
   }
 
-  .table thead th {
-    padding: 9px 8px;
-    font-size: 0.68rem;
-  }
+  /* HIDE "AGS" LABEL — show only number */
+  .dayLabel { display: none; }
+  .dayNum { font-size: 0.72rem; }
 
-  .table tbody td {
-    padding: 9px 8px;
-    font-size: 0.82rem;
-  }
+  /* SMALLER TH / TD PADDING */
+  .thHead { padding: 8px 7px; font-size: 0.6rem; }
 
+  .table tbody td { padding: 8px 7px; font-size: 0.8rem; }
+  .colExp         { padding: 8px 7px; }
+  .colTotalVal    { padding: 8px 7px; }
+
+  /* TOTAL COL — not sticky on mobile (save real estate) */
+  .colTotalHeader { position: static; }
+  .colTotalVal    { position: static; }
+
+  /* BADGES */
+  .skuBadge  { font-size: 0.68rem; padding: 2px 5px; }
+  .descText  { font-size: 0.76rem; }
+  .qtyPos    { font-size: 0.8rem; }
+  .totalBadge{ font-size: 0.82rem; }
+
+  /* FOOTER */
   .footerBar {
     padding: 10px 14px;
-    font-size: 0.78rem;
-  }
-
-  .tableScroll {
-    max-height: 60vh;
-  }
-
-  .exportBtn {
-    width: 100%;
-    justify-content: center;
+    font-size: 0.72rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
   }
 }
 
+/* Extra small screens ≤ 480px */
+@media (max-width: 480px) {
+  .stickyColDesc { min-width: 115px; }
+  .title { font-size: 0.82rem; }
+  .tableScroll { max-height: 48vh; }
+}
