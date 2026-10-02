@@ -5,13 +5,13 @@ import { MONTHS_ID } from '@/lib/types';
 
 interface Props {
   selectedDate: number;
-  todayDate: number;
+  todayDate?: number;
   onSelect: (date: number) => void;
   activeMonth: number;
   activeYear: number;
 }
 
-export default function DateNav({ selectedDate, todayDate, onSelect, activeMonth, activeYear }: Props) {
+export default function DateNav({ selectedDate, onSelect, activeMonth, activeYear }: Props) {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const monthName = MONTHS_ID[activeMonth] || 'Bulan';
 
@@ -22,11 +22,7 @@ export default function DateNav({ selectedDate, todayDate, onSelect, activeMonth
         {days.map(day => (
           <button
             key={day}
-            className={[
-              styles.dateBtn,
-              selectedDate === day ? styles.active : '',
-              todayDate === day ? styles.today : '',
-            ].join(' ')}
+            className={`${styles.dateBtn} ${selectedDate === day ? styles.active : ''}`}
             onClick={() => onSelect(day)}
             aria-label={`${day} ${monthName} ${activeYear}`}
             aria-pressed={selectedDate === day}
