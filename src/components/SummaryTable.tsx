@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import styles from './SummaryTable.module.css';
-import { CycleItem, SheetConfig, SourceFilter } from '@/lib/types';
+import { CycleItem, SheetConfig, SourceFilter, MONTHS_ID } from '@/lib/types';
 import { formatExpDate } from '@/lib/utils';
 import { fetchCycleData } from '@/lib/sheetsApi';
 import { exportMatrixToExcel } from '@/lib/exportExcel';
@@ -14,7 +14,10 @@ interface Props {
   selectedDate: number;
   sourceFilter: SourceFilter;
   onSetSource?: (s: SourceFilter) => void;
+  activeMonth: number;
+  activeYear: number;
 }
+
 
 interface SkuSummaryRow {
   sku: string;
@@ -32,6 +35,8 @@ export default function SummaryTable({
   selectedDate,
   sourceFilter,
   onSetSource,
+  activeMonth,
+  activeYear,
 }: Props) {
   const [search, setSearch] = useState('');
   const [manualSyncedData, setManualSyncedData] = useState<Record<number, CycleItem[]>>({});
@@ -39,7 +44,9 @@ export default function SummaryTable({
   const [syncedCount, setSyncedCount] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
 
+  const monthName = MONTHS_ID[activeMonth] || 'Bulan';
   const days = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
+
 
   const handleSyncAllDates = async () => {
     if (!config.apiKey || isSyncingAll) return;
@@ -156,7 +163,7 @@ export default function SummaryTable({
           <div>
             <h2 className={styles.title}>Akumulasi SKU &amp; Expired — {sourceBadgeLabel}</h2>
             <p className={styles.subText}>
-              Matriks stok harian · 1–31 Agustus 2026 · <strong>{filteredRows.length}</strong> SKU ditampilkan
+              Matriks stok harian · 1–31 {monthName} {activeYear} · <strong>{filteredRows.length}</strong> SKU ditampilkan
             </p>
           </div>
         </div>
@@ -318,7 +325,7 @@ export default function SummaryTable({
           {search && ` · pencarian "${search}"`}
         </span>
         <span className={styles.footerRight}>
-          {activeConnectedDaysCount} hari stok terhubung · 1–31 Agustus 2026
+          {activeConnectedDaysCount} hari stok terhubung · 1–31 {monthName} {activeYear}
         </span>
       </div>
 

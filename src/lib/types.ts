@@ -28,6 +28,16 @@ export interface ColMapping {
   customer: number;
 }
 
+export const MONTHS_ID = [
+  '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+];
+
+export const MONTHS_SHORT = [
+  '', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+  'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des',
+];
+
 export interface SheetConfig {
   apiKey: string;
   freshSpreadsheetId: string;
@@ -36,6 +46,8 @@ export interface SheetConfig {
   dryRowStart: number;
   freshColRange: string;
   dryColRange: string;
+  activeMonth: number; // 1–12, periode data aktif
+  activeYear: number;
   // Mapping kolom terpisah untuk Fresh dan Dry
   freshColMapping: ColMapping;
   dryColMapping: ColMapping;
@@ -78,6 +90,9 @@ export const DEFAULT_CONFIG: SheetConfig = {
   dryRowStart: Number(process.env.NEXT_PUBLIC_DRY_ROW_START) || 7,
   freshColRange: process.env.NEXT_PUBLIC_FRESH_COL_RANGE || 'A:P',
   dryColRange: process.env.NEXT_PUBLIC_DRY_COL_RANGE || 'A:P',
+  activeMonth: new Date().getMonth() + 1,
+  activeYear: new Date().getFullYear(),
   freshColMapping: DEFAULT_FRESH_COL_MAPPING,
   dryColMapping: DEFAULT_DRY_COL_MAPPING,
 };
+

@@ -149,6 +149,9 @@ export default function HomePage() {
     dry: items.filter(i => i.source === 'dry').length,
   };
 
+  const activeMonth = config?.activeMonth ?? (new Date().getMonth() + 1);
+  const activeYear  = config?.activeYear  ?? new Date().getFullYear();
+
   return (
     <div className="app-layout">
       {/* Initial Load Progress Overlay */}
@@ -181,8 +184,8 @@ export default function HomePage() {
             <h1 className="topbar-title">Halo, {adminLoggedIn ? 'Admin Priandana' : 'User'} 👋</h1>
             <p className="topbar-subtitle">
               {activeView === 'summary'
-                ? 'Menu Akumulasi SKU & Expired — Ringkasan per Tanggal (1-31 Agustus)'
-                : `Ringkasan data Cycle Count GACOAN · Padalarang (${selectedDate} Agustus 2026)`}
+                ? `Menu Akumulasi SKU & Expired — Ringkasan per Tanggal (1-31 ${config ? ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][activeMonth] : 'Bulan'})`
+                : `Ringkasan data Cycle Count GACOAN · Padalarang (${selectedDate} ${config ? ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][activeMonth] : 'Bulan'} ${activeYear})`}
             </p>
           </div>
           <div className="topbar-right">
@@ -203,10 +206,12 @@ export default function HomePage() {
           <SummaryTable
             initialItems={allFetchedItems[selectedDate] || items}
             allDateDataMap={allFetchedItems}
-            config={config || { apiKey: '', freshSpreadsheetId: '', drySpreadsheetId: '', freshRowStart: 6, dryRowStart: 7, freshColRange: 'A:P', dryColRange: 'A:P', freshColMapping: { no: 0, location: 6, sku: 7, desc: 8, expDate: 9, qty: 10, uom: 11, customer: 12 }, dryColMapping: { no: 0, location: 5, sku: 6, desc: 7, expDate: 8, qty: 9, uom: 10, customer: 12 } }}
+            config={config || { apiKey: '', freshSpreadsheetId: '', drySpreadsheetId: '', freshRowStart: 6, dryRowStart: 7, freshColRange: 'A:P', dryColRange: 'A:P', activeMonth, activeYear, freshColMapping: { no: 0, location: 6, sku: 7, desc: 8, expDate: 9, qty: 10, uom: 11, customer: 12 }, dryColMapping: { no: 0, location: 5, sku: 6, desc: 7, expDate: 8, qty: 9, uom: 10, customer: 12 } }}
             selectedDate={selectedDate}
             sourceFilter={sourceFilter}
             onSetSource={setSource}
+            activeMonth={activeMonth}
+            activeYear={activeYear}
           />
         ) : (
           <>
@@ -218,6 +223,8 @@ export default function HomePage() {
               lastUpdated={lastUpdated}
               onRefresh={handleRefresh}
               isLoading={isLoading}
+              activeMonth={activeMonth}
+              activeYear={activeYear}
             />
 
             {/* Date Navigation */}
@@ -225,6 +232,8 @@ export default function HomePage() {
               selectedDate={selectedDate}
               todayDate={today}
               onSelect={handleDateSelect}
+              activeMonth={activeMonth}
+              activeYear={activeYear}
             />
 
             {/* Data Table */}
@@ -240,9 +249,12 @@ export default function HomePage() {
               onSearch={setSearch}
               onSort={setSort}
               onRetry={handleRefresh}
+              activeMonth={activeMonth}
+              activeYear={activeYear}
             />
           </>
         )}
+
       </div>
 
       {/* Settings Modal */}

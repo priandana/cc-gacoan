@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './StatsBar.module.css';
-import { CycleItem } from '@/lib/types';
+import { CycleItem, MONTHS_ID, MONTHS_SHORT } from '@/lib/types';
 import { calculateStats } from '@/lib/utils';
 
 interface Props {
@@ -11,16 +11,19 @@ interface Props {
   lastUpdated: Date | null;
   onRefresh: () => void;
   isLoading: boolean;
+  activeMonth: number;
+  activeYear: number;
 }
 
 export default function StatsBar({
   items,
   selectedDate,
-  lastUpdated,
-  onRefresh,
-  isLoading,
+  activeMonth,
+  activeYear,
 }: Props) {
   const stats = calculateStats(items);
+  const monthShort = MONTHS_SHORT[activeMonth] || 'Bln';
+  const monthFull  = MONTHS_ID[activeMonth]   || 'Bulan';
 
   return (
     <div className={styles.container}>
@@ -63,8 +66,8 @@ export default function StatsBar({
             <div className={`${styles.iconBox} ${styles.iconGreen}`}>📅</div>
             <span className={styles.cardLabel}>TANGGAL SHEET</span>
           </div>
-          <div className={styles.cardVal}>{selectedDate} Ags</div>
-          <div className={styles.cardSub}>Agustus 2026</div>
+          <div className={styles.cardVal}>{selectedDate} {monthShort}</div>
+          <div className={styles.cardSub}>{monthFull} {activeYear}</div>
         </div>
       </div>
     </div>

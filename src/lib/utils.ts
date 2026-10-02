@@ -22,6 +22,8 @@ export function loadConfig(): SheetConfig {
       apiKey: saved.apiKey || DEFAULT_CONFIG.apiKey,
       freshSpreadsheetId: saved.freshSpreadsheetId || DEFAULT_CONFIG.freshSpreadsheetId,
       drySpreadsheetId: saved.drySpreadsheetId || DEFAULT_CONFIG.drySpreadsheetId,
+      activeMonth: saved.activeMonth || new Date().getMonth() + 1,
+      activeYear: saved.activeYear || new Date().getFullYear(),
       freshColMapping: { ...DEFAULT_FRESH_COL_MAPPING, ...(saved.freshColMapping || {}) },
       dryColMapping: { ...DEFAULT_DRY_COL_MAPPING, ...(saved.dryColMapping || {}) },
     };

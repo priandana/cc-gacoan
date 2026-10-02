@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
 import { formatExpDate } from './utils';
+import { MONTHS_ID } from './types';
 
 export interface ExportRow {
   sku: string;
@@ -30,7 +31,9 @@ function buildWorksheet(
   tabColorHex: string,
   headerBgHex: string,
   rows: ExportRow[],
-  selectedDate: number
+  selectedDate: number,
+  activeMonth: number,
+  activeYear: number
 ) {
   const worksheet = workbook.addWorksheet(sheetTitle, {
     views: [{ showGridLines: true, state: 'frozen', xSplit: 3, ySplit: 7 }],
@@ -60,7 +63,7 @@ function buildWorksheet(
     hour: '2-digit',
     minute: '2-digit',
   });
-  subTitleCell.value = `Kategori Sheet: ${sheetTitle}  |  Periode: 1 - 31 Agustus 2026  |  Tanggal Pilihan: ${selectedDate} Agustus 2026  |  Di-export: ${nowStr}`;
+  subTitleCell.value = `Kategori Sheet: ${sheetTitle}  |  Periode: 1 - 31 ${MONTHS_ID[activeMonth]} ${activeYear}  |  Tanggal Pilihan: ${selectedDate} ${MONTHS_ID[activeMonth]} ${activeYear}  |  Di-export: ${nowStr}`;
   subTitleCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF475569' } };
   subTitleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
   subTitleCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
@@ -276,7 +279,9 @@ function buildWorksheet(
 export async function exportMatrixToExcel(
   rows: ExportRow[],
   sourceLabel: string,
-  selectedDate: number
+  selectedDate: number,
+  activeMonth: number = new Date().getMonth() + 1,
+  activeYear: number  = new Date().getFullYear()
 ) {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'GACOAN Cycle Count Intelligence';
@@ -287,36 +292,33 @@ export async function exportMatrixToExcel(
   const isDry = sourceLabel.includes('DRY');
 
   if (isAll) {
-    // 1. Sheet 1: ALL Combined Summary
-    buildWorksheet(workbook, 'SUMMARY ALL GUDANG', 'FFD60A', 'FFD60A', rows, selectedDate);
+    buildWorksheet(workbook, 'SUMMARY ALL GUDANG', 'FFD60A', 'FFD60A', rows, selectedDate, activeMonth, activeYear);
 
-    // 2. Sheet 2: WH FRESH
     const freshRows = rows.filter(r => r.source === 'fresh' || !r.source);
     if (freshRows.length > 0) {
-      buildWorksheet(workbook, 'WH FRESH', '38BDF8', '38BDF8', freshRows, selectedDate);
+      buildWorksheet(workbook, 'WH FRESH', '38BDF8', '38BDF8', freshRows, selectedDate, activeMonth, activeYear);
     }
 
-    // 3. Sheet 3: WH DRY
     const dryRows = rows.filter(r => r.source === 'dry' || !r.source);
     if (dryRows.length > 0) {
-      buildWorksheet(workbook, 'WH DRY', 'FB923C', 'FB923C', dryRows, selectedDate);
+      buildWorksheet(workbook, 'WH DRY', 'FB923C', 'FB923C', dryRows, selectedDate, activeMonth, activeYear);
     }
   } else if (isFresh) {
-    buildWorksheet(workbook, 'WH FRESH', '38BDF8', '38BDF8', rows, selectedDate);
+    buildWorksheet(workbook, 'WH FRESH', '38BDF8', '38BDF8', rows, selectedDate, activeMonth, activeYear);
   } else if (isDry) {
-    buildWorksheet(workbook, 'WH DRY', 'FB923C', 'FB923C', rows, selectedDate);
+    buildWorksheet(workbook, 'WH DRY', 'FB923C', 'FB923C', rows, selectedDate, activeMonth, activeYear);
   } else {
-    buildWorksheet(workbook, 'AKUMULASI STOK', 'FFD60A', 'FFD60A', rows, selectedDate);
+    buildWorksheet(workbook, 'AKUMULASI STOK', 'FFD60A', 'FFD60A', rows, selectedDate, activeMonth, activeYear);
   }
 
-  // Export Buffer & Save
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   });
 
   const cleanLabel = sourceLabel.replace(/[^a-zA-Z0-9]/g, '_');
-  const fileName = `Laporan_Akumulasi_Stok_GACOAN_${cleanLabel}_Agustus_2026.xlsx`;
+  const monthName = MONTHS_ID[activeMonth] || 'Bulan';
+  const fileName = `Laporan_Akumulasi_Stok_GACOAN_${cleanLabel}_${monthName}_${activeYear}.xlsx`;
 
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');

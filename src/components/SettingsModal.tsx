@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './SettingsModal.module.css';
-import { SheetConfig, ColMapping } from '@/lib/types';
+import { SheetConfig, ColMapping, MONTHS_ID } from '@/lib/types';
 import { useState } from 'react';
 
 interface Props {
@@ -103,6 +103,37 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
               </a>{' '}
               → Enable Sheets API → Create Credentials → API Key
             </small>
+          </div>
+
+          {/* Periode Aktif */}
+          <div className={styles.section}>
+            <h3>📅 Periode Data Aktif</h3>
+            <div className={styles.row2}>
+              <div className={styles.inputGroup}>
+                <label>Bulan</label>
+                <select
+                  value={form.activeMonth}
+                  onChange={e => update('activeMonth', parseInt(e.target.value))}
+                  style={{ padding: '8px 10px', borderRadius: '8px', border: '2px solid #0A0A0A', fontFamily: 'inherit', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}
+                >
+                  {MONTHS_ID.slice(1).map((name, i) => (
+                    <option key={i + 1} value={i + 1}>{name}</option>
+                  ))}
+                </select>
+                <small>Bulan yang sedang aktif di spreadsheet</small>
+              </div>
+              <div className={styles.inputGroup}>
+                <label>Tahun</label>
+                <input
+                  type="number"
+                  min={2024}
+                  max={2099}
+                  value={form.activeYear}
+                  onChange={e => update('activeYear', parseInt(e.target.value))}
+                />
+                <small>Tahun periode aktif</small>
+              </div>
+            </div>
           </div>
 
           {/* Spreadsheet IDs */}

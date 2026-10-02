@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './DataTable.module.css';
-import { CycleItem, SortField, SortDirection } from '@/lib/types';
+import { CycleItem, SortField, SortDirection, MONTHS_ID } from '@/lib/types';
 import { formatExpDate, formatQty, totalQty } from '@/lib/utils';
 
 interface Props {
@@ -16,12 +16,10 @@ interface Props {
   onSearch: (q: string) => void;
   onSort: (field: SortField) => void;
   onRetry: () => void;
+  activeMonth: number;
+  activeYear: number;
 }
 
-const MONTH_NAMES = [
-  '', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
-];
 
 function SortIcon({ field, active, dir }: { field: string; active: boolean; dir: SortDirection }) {
   if (!active) return <span className={styles.sortIcon}>↕</span>;
@@ -40,21 +38,25 @@ export default function DataTable({
   onSearch,
   onSort,
   onRetry,
+  activeMonth,
+  activeYear,
 }: Props) {
   const total = totalQty(items);
   const sourceLabel = sourceFilter === 'all' ? 'ALL' : sourceFilter === 'fresh' ? 'WH FRESH' : 'WH DRY';
+  const monthName = MONTHS_ID[activeMonth] || 'Bulan';
 
   return (
     <div className={styles.wrapper}>
       {/* Toolbar */}
       <div className={styles.toolbar}>
         <div className={styles.titleGroup}>
-          <span className={styles.dateLabel}>{selectedDate} AGUSTUS 2026</span>
+          <span className={styles.dateLabel}>{selectedDate} {monthName.toUpperCase()} {activeYear}</span>
           <span className={styles.sourceTag}>{sourceLabel}</span>
           {items.length > 0 && (
             <span className={styles.countTag}>{items.length} ITEM</span>
           )}
         </div>
+
         <div className={styles.searchBox}>
           <span className={styles.searchIcon}>🔍</span>
           <input
@@ -80,7 +82,7 @@ export default function DataTable({
             <div className={styles.bounceBlock} />
           </div>
           <p className={styles.loadingText}>Memuat data dari Google Sheets...</p>
-          <small className={styles.loadingSub}>Mengambil data {selectedDate} {MONTH_NAMES[8]} 2026</small>
+          <small className={styles.loadingSub}>Mengambil data {selectedDate} {monthName} {activeYear}</small>
         </div>
       )}
 
