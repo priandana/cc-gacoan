@@ -38,6 +38,16 @@ export const MONTHS_SHORT = [
   'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des',
 ];
 
+/** Satu entri periode data (per bulan) */
+export interface Period {
+  id: string;                 // e.g. 'sep-2026'
+  label: string;              // e.g. 'September 2026'
+  month: number;              // 1-12
+  year: number;
+  freshSpreadsheetId: string;
+  drySpreadsheetId: string;   // bisa kosong jika belum tersedia
+}
+
 export interface SheetConfig {
   apiKey: string;
   freshSpreadsheetId: string;
@@ -48,6 +58,8 @@ export interface SheetConfig {
   dryColRange: string;
   activeMonth: number; // 1–12, periode data aktif
   activeYear: number;
+  activePeriodId: string;     // id Period yang aktif
+  periods: Period[];          // daftar semua periode
   // Mapping kolom terpisah untuk Fresh dan Dry
   freshColMapping: ColMapping;
   dryColMapping: ColMapping;
@@ -81,18 +93,39 @@ export const DEFAULT_DRY_COL_MAPPING: ColMapping = {
   customer: 12,
 };
 
+/** Daftar periode yang tersedia — update setiap ganti bulan */
+export const DEFAULT_PERIODS: Period[] = [
+  {
+    id: 'sep-2026',
+    label: 'September 2026',
+    month: 9,
+    year: 2026,
+    freshSpreadsheetId: '1pYRAaW-6Yc9twqkrBCCOmYRzPEa6xVGpgzY-KSDBZpE',
+    drySpreadsheetId:   '1a-ufbsNCu_TGmdTrtVU1ukCHbq7zaoCOQLAdBjrQ9Ao',
+  },
+  {
+    id: 'oct-2026',
+    label: 'Oktober 2026',
+    month: 10,
+    year: 2026,
+    freshSpreadsheetId: '1lSwvVp3lQk6O6NFC59FQrcKz9lxUujVHXefTzKX2KQ4',
+    drySpreadsheetId:   '', // TBD — menunggu dari team
+  },
+];
 
 export const DEFAULT_CONFIG: SheetConfig = {
   apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || '',
-  freshSpreadsheetId: process.env.NEXT_PUBLIC_FRESH_SPREADSHEET_ID || '',
-  drySpreadsheetId: process.env.NEXT_PUBLIC_DRY_SPREADSHEET_ID || '',
+  // Default ke September 2026 (periode aktif saat ini)
+  freshSpreadsheetId: '1pYRAaW-6Yc9twqkrBCCOmYRzPEa6xVGpgzY-KSDBZpE',
+  drySpreadsheetId:   '1a-ufbsNCu_TGmdTrtVU1ukCHbq7zaoCOQLAdBjrQ9Ao',
   freshRowStart: Number(process.env.NEXT_PUBLIC_FRESH_ROW_START) || 6,
-  dryRowStart: Number(process.env.NEXT_PUBLIC_DRY_ROW_START) || 7,
+  dryRowStart:   Number(process.env.NEXT_PUBLIC_DRY_ROW_START)   || 7,
   freshColRange: process.env.NEXT_PUBLIC_FRESH_COL_RANGE || 'A:P',
-  dryColRange: process.env.NEXT_PUBLIC_DRY_COL_RANGE || 'A:P',
-  activeMonth: new Date().getMonth() + 1,
-  activeYear: new Date().getFullYear(),
+  dryColRange:   process.env.NEXT_PUBLIC_DRY_COL_RANGE   || 'A:P',
+  activeMonth:    9,
+  activeYear:     2026,
+  activePeriodId: 'sep-2026',
+  periods:        DEFAULT_PERIODS,
   freshColMapping: DEFAULT_FRESH_COL_MAPPING,
-  dryColMapping: DEFAULT_DRY_COL_MAPPING,
+  dryColMapping:   DEFAULT_DRY_COL_MAPPING,
 };
-

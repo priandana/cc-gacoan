@@ -1,7 +1,8 @@
 'use client';
 
 import styles from './SettingsModal.module.css';
-import { SheetConfig, ColMapping, MONTHS_ID } from '@/lib/types';
+import { SheetConfig, ColMapping, DEFAULT_PERIODS, Period } from '@/lib/types';
+import { extractSpreadsheetId } from '@/lib/utils';
 import { useState } from 'react';
 
 interface Props {
@@ -23,14 +24,60 @@ const COL_LABELS: Record<keyof ColMapping, string> = {
 };
 
 export default function SettingsModal({ isOpen, config, onSave, onClose }: Props) {
-  const [form, setForm] = useState<SheetConfig>(config);
+  const [form, setForm] = useState<SheetConfig>(() => ({
+    ...config,
+    periods: config.periods && config.periods.length > 0 ? config.periods : DEFAULT_PERIODS,
+    activePeriodId: config.activePeriodId || 'sep-2026',
+  }));
+
+  const [selectedPeriodTab, setSelectedPeriodTab] = useState<string>(
+    config.activePeriodId || 'sep-2026'
+  );
+
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
+  const periods = form.periods && form.periods.length > 0 ? form.periods : DEFAULT_PERIODS;
+  const currentPeriod = periods.find(p => p.id === selectedPeriodTab) || periods[0];
+
   const update = (key: keyof SheetConfig, value: string | number) => {
     setForm(prev => ({ ...prev, [key]: value }));
+    setTestResult(null);
+  };
+
+  const updatePeriodSheetId = (field: 'freshSpreadsheetId' | 'drySpreadsheetId', rawVal: string) => {
+    const cleanId = extractSpreadsheetId(rawVal);
+    const updatedPeriods = periods.map(p => {
+      if (p.id === currentPeriod.id) {
+        return { ...p, [field]: cleanId };
+      }
+      return p;
+    });
+
+    setForm(prev => {
+      const isCurrentActive = prev.activePeriodId === currentPeriod.id;
+      return {
+        ...prev,
+        periods: updatedPeriods,
+        ...(isCurrentActive ? { [field]: cleanId } : {}),
+      };
+    });
+    setTestResult(null);
+  };
+
+  const handleSetActivePeriod = (periodId: string) => {
+    const target = periods.find(p => p.id === periodId);
+    if (!target) return;
+    setForm(prev => ({
+      ...prev,
+      activePeriodId: target.id,
+      activeMonth: target.month,
+      activeYear: target.year,
+      freshSpreadsheetId: target.freshSpreadsheetId,
+      drySpreadsheetId: target.drySpreadsheetId,
+    }));
     setTestResult(null);
   };
 
@@ -54,14 +101,23 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
     try {
       const { getSheetTabs } = await import('@/lib/sheetsApi');
       const msgs: string[] = [];
-      if (form.freshSpreadsheetId) {
-        const tabs = await getSheetTabs(form.freshSpreadsheetId, form.apiKey);
+
+      msgs.push(`📅 Periode: ${currentPeriod.label}`);
+
+      if (currentPeriod.freshSpreadsheetId) {
+        const tabs = await getSheetTabs(currentPeriod.freshSpreadsheetId, form.apiKey);
         msgs.push(`✅ WH Fresh: ${tabs.length} sheet (${tabs.slice(0, 5).join(', ')}...)`);
+      } else {
+        msgs.push(`⚠️ WH Fresh: Belum diisi`);
       }
-      if (form.drySpreadsheetId) {
-        const tabs = await getSheetTabs(form.drySpreadsheetId, form.apiKey);
+
+      if (currentPeriod.drySpreadsheetId) {
+        const tabs = await getSheetTabs(currentPeriod.drySpreadsheetId, form.apiKey);
         msgs.push(`✅ WH Dry: ${tabs.length} sheet (${tabs.slice(0, 5).join(', ')}...)`);
+      } else {
+        msgs.push(`ℹ️ WH Dry: Belum diisi (menunggu dari team)`);
       }
+
       setTestResult(msgs.join('\n'));
     } catch (e: unknown) {
       setTestResult(`❌ Error: ${e instanceof Error ? e.message : String(e)}`);
@@ -71,7 +127,18 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
   };
 
   const handleSave = () => {
-    onSave(form);
+    // Pastikan activePeriod sync dengan periods
+    const activeP = periods.find(p => p.id === form.activePeriodId) || periods[0];
+    const finalConfig: SheetConfig = {
+      ...form,
+      periods,
+      activePeriodId: activeP.id,
+      activeMonth: activeP.month,
+      activeYear: activeP.year,
+      freshSpreadsheetId: activeP.freshSpreadsheetId,
+      drySpreadsheetId: activeP.drySpreadsheetId,
+    };
+    onSave(finalConfig);
     onClose();
   };
 
@@ -81,7 +148,7 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
         <div className={styles.header}>
           <div>
             <h2>⚙️ SETUP KONEKSI</h2>
-            <p>Konfigurasi Google Sheets API untuk Cycle Count GACOAN</p>
+            <p>Konfigurasi Google Sheets API &amp; Periode Bulanan GACOAN</p>
           </div>
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
@@ -105,61 +172,76 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
             </small>
           </div>
 
-          {/* Periode Aktif */}
+          {/* Periode Bulanan & Spreadsheet IDs */}
           <div className={styles.section}>
-            <h3>📅 Periode Data Aktif</h3>
-            <div className={styles.row2}>
-              <div className={styles.inputGroup}>
-                <label>Bulan</label>
-                <select
-                  value={form.activeMonth}
-                  onChange={e => update('activeMonth', parseInt(e.target.value))}
-                  style={{ padding: '8px 10px', borderRadius: '8px', border: '2px solid #0A0A0A', fontFamily: 'inherit', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}
-                >
-                  {MONTHS_ID.slice(1).map((name, i) => (
-                    <option key={i + 1} value={i + 1}>{name}</option>
-                  ))}
-                </select>
-                <small>Bulan yang sedang aktif di spreadsheet</small>
-              </div>
-              <div className={styles.inputGroup}>
-                <label>Tahun</label>
-                <input
-                  type="number"
-                  min={2024}
-                  max={2099}
-                  value={form.activeYear}
-                  onChange={e => update('activeYear', parseInt(e.target.value))}
-                />
-                <small>Tahun periode aktif</small>
-              </div>
-            </div>
-          </div>
+            <h3>📊 Spreadsheet per Periode</h3>
+            <p style={{ fontSize: '0.8rem', color: '#4B5563', marginBottom: '8px', fontWeight: 600 }}>
+              Pilih tab bulan di bawah untuk mengisi Spreadsheet ID atau link masing-masing periode:
+            </p>
 
-          {/* Spreadsheet IDs */}
-          <div className={styles.section}>
-            <h3>📊 Spreadsheet IDs</h3>
+            {/* Period Tabs */}
+            <div className={styles.periodTabs}>
+              {periods.map(p => {
+                const isTabActive = p.id === selectedPeriodTab;
+                const isDashboardActive = p.id === form.activePeriodId;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    className={`${styles.periodTab} ${isTabActive ? styles.periodTabActive : ''}`}
+                    onClick={() => {
+                      setSelectedPeriodTab(p.id);
+                      setTestResult(null);
+                    }}
+                  >
+                    <span>🗓 {p.label}</span>
+                    {isDashboardActive && <span className={styles.activeBadge}>AKTIF</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Inputs for Current Selected Period Tab */}
             <div className={styles.row2}>
               <div className={styles.inputGroup}>
-                <label>🧊 WH FRESH — Spreadsheet ID</label>
+                <label>🧊 WH FRESH — {currentPeriod.label}</label>
                 <input
                   type="text"
-                  placeholder="1AbCdEfGhIjKlMnOpQrSt..."
-                  value={form.freshSpreadsheetId}
-                  onChange={e => update('freshSpreadsheetId', e.target.value)}
+                  placeholder="Paste URL Google Sheets atau ID..."
+                  value={currentPeriod.freshSpreadsheetId}
+                  onChange={e => updatePeriodSheetId('freshSpreadsheetId', e.target.value)}
                 />
-                <small>Dari URL: /spreadsheets/d/<strong>[ID INI]</strong>/edit</small>
+                <small>Bisa paste ID langsung atau full link spreadsheet</small>
               </div>
               <div className={styles.inputGroup}>
-                <label>📦 WH DRY — Spreadsheet ID</label>
+                <label>
+                  📦 WH DRY — {currentPeriod.label}
+                  {!currentPeriod.drySpreadsheetId && (
+                    <span style={{ color: '#F59E0B', fontSize: '0.7rem', fontWeight: 700, marginLeft: '6px' }}>
+                      (Menunggu team)
+                    </span>
+                  )}
+                </label>
                 <input
                   type="text"
-                  placeholder="1AbCdEfGhIjKlMnOpQrSt..."
-                  value={form.drySpreadsheetId}
-                  onChange={e => update('drySpreadsheetId', e.target.value)}
+                  placeholder="Paste URL Google Sheets atau ID..."
+                  value={currentPeriod.drySpreadsheetId}
+                  onChange={e => updatePeriodSheetId('drySpreadsheetId', e.target.value)}
                 />
+                <small>Bisa paste ID langsung atau full link spreadsheet</small>
               </div>
             </div>
+
+            {/* Set as active checkbox */}
+            <label className={styles.periodActiveCheckbox}>
+              <input
+                type="radio"
+                name="activePeriodRadio"
+                checked={form.activePeriodId === currentPeriod.id}
+                onChange={() => handleSetActivePeriod(currentPeriod.id)}
+              />
+              <span>Jadikan <strong>{currentPeriod.label}</strong> sebagai periode aktif dashboard</span>
+            </label>
           </div>
 
           {/* Row Start & Col Range */}
@@ -169,26 +251,26 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
               <div className={styles.inputGroup}>
                 <label>Baris mulai data — WH Fresh</label>
                 <input type="number" min={1} value={form.freshRowStart}
-                  onChange={e => update('freshRowStart', parseInt(e.target.value))} />
+                  onChange={e => update('freshRowStart', parseInt(e.target.value) || 6)} />
                 <small>Default: 6</small>
               </div>
               <div className={styles.inputGroup}>
                 <label>Baris mulai data — WH Dry</label>
                 <input type="number" min={1} value={form.dryRowStart}
-                  onChange={e => update('dryRowStart', parseInt(e.target.value))} />
+                  onChange={e => update('dryRowStart', parseInt(e.target.value) || 7)} />
                 <small>Default: 7</small>
               </div>
               <div className={styles.inputGroup}>
                 <label>Range kolom — WH Fresh</label>
                 <input type="text" value={form.freshColRange}
                   onChange={e => update('freshColRange', e.target.value)} />
-                <small>Default: A:H</small>
+                <small>Default: A:P</small>
               </div>
               <div className={styles.inputGroup}>
                 <label>Range kolom — WH Dry</label>
                 <input type="text" value={form.dryColRange}
                   onChange={e => update('dryColRange', e.target.value)} />
-                <small>Default: A:L</small>
+                <small>Default: A:P</small>
               </div>
             </div>
           </div>
@@ -208,7 +290,7 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
                 <div key={`fresh-${key}`} className={styles.inputGroup}>
                   <label>{COL_LABELS[key]}</label>
                   <input type="number" min={0} value={form.freshColMapping[key]}
-                    onChange={e => updateFreshCol(key, parseInt(e.target.value))} />
+                    onChange={e => updateFreshCol(key, parseInt(e.target.value) || 0)} />
                 </div>
               ))}
             </div>
@@ -229,7 +311,7 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
                 <div key={`dry-${key}`} className={styles.inputGroup}>
                   <label>{COL_LABELS[key]}</label>
                   <input type="number" min={0} value={form.dryColMapping[key]}
-                    onChange={e => updateDryCol(key, parseInt(e.target.value))} />
+                    onChange={e => updateDryCol(key, parseInt(e.target.value) || 0)} />
                 </div>
               ))}
             </div>
@@ -254,17 +336,21 @@ export default function SettingsModal({ isOpen, config, onSave, onClose }: Props
               className={styles.btnReset}
               onClick={() => {
                 const { DEFAULT_CONFIG } = require('@/lib/types');
-                setForm({ ...DEFAULT_CONFIG, apiKey: form.apiKey, freshSpreadsheetId: form.freshSpreadsheetId, drySpreadsheetId: form.drySpreadsheetId });
-                setTestResult('✅ Mapping kolom di-reset ke default (struktur 12 kolom)');
+                setForm({
+                  ...DEFAULT_CONFIG,
+                  apiKey: form.apiKey,
+                  periods: DEFAULT_CONFIG.periods,
+                });
+                setTestResult('✅ Pengaturan di-reset ke default September & Oktober');
               }}
             >
-              🔄 RESET KOLOM
+              🔄 RESET DEFAULT
             </button>
             <button className={styles.btnTest} onClick={handleTest} disabled={isTesting}>
-              {isTesting ? '⏳ Testing...' : '🔌 TEST KONEKSI'}
+              {isTesting ? '⏳ Testing...' : `🔌 TEST KONEKSI (${currentPeriod.label})`}
             </button>
             <button className={styles.btnSave} onClick={handleSave}>
-              💾 SAVE & CONNECT
+              💾 SAVE &amp; CONNECT
             </button>
           </div>
         </div>

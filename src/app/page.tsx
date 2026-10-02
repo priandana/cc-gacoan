@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { SheetConfig, CycleItem } from '@/lib/types';
+import { SheetConfig, CycleItem, DEFAULT_PERIODS } from '@/lib/types';
 import { loadConfig, saveConfig, getTodayDate } from '@/lib/utils';
 import { useCycleData } from '@/hooks/useCycleData';
 import { isLoggedIn, logout } from '@/lib/auth';
@@ -118,10 +118,107 @@ export default function HomePage() {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Ganti periode via Sidebar
+  const handleSwitchPeriod = useCallback((periodId: string) => {
+    if (!config) return;
+    const periods = config.periods && config.periods.length > 0 ? config.periods : DEFAULT_PERIODS;
+    const targetPeriod = periods.find(p => p.id === periodId);
+    if (!targetPeriod) return;
+
+    const newConfig: SheetConfig = {
+      ...config,
+      periods,
+      activePeriodId: targetPeriod.id,
+      activeMonth: targetPeriod.month,
+      activeYear: targetPeriod.year,
+      freshSpreadsheetId: targetPeriod.freshSpreadsheetId,
+      drySpreadsheetId: targetPeriod.drySpreadsheetId,
+    };
+
+    saveConfig(newConfig);
+    setConfig(newConfig);
+    setAllFetchedItems({}); // Bersihkan cache data matrix periode sebelumnya
+
+    loadData(selectedDate, newConfig);
+
+    // Sync ulang 31 tanggal untuk periode baru
+    setIsInitialSync(true);
+    setSyncProgress({ current: 1, total: 31, percent: 0 });
+
+    let isSubscribed = true;
+    async function runPeriodSync() {
+      const accumulated: Record<number, CycleItem[]> = {};
+      const total = 31;
+      for (let d = 1; d <= total; d++) {
+        if (!isSubscribed) break;
+        try {
+          const dateItems = await fetchCycleData(d, newConfig);
+          if (dateItems.length > 0) {
+            accumulated[d] = dateItems;
+          }
+        } catch (e) {
+          console.warn(`[HomePage] Period sync date ${d} notice:`, e);
+        }
+
+        if (isSubscribed) {
+          setSyncProgress({
+            current: d,
+            total,
+            percent: (d / total) * 100,
+          });
+          setAllFetchedItems({ ...accumulated });
+        }
+        await new Promise(r => setTimeout(r, 120));
+      }
+      if (isSubscribed) {
+        setIsInitialSync(false);
+      }
+    }
+
+    runPeriodSync();
+  }, [config, selectedDate, loadData]);
+
   const handleSaveConfig = useCallback((newConfig: SheetConfig) => {
     saveConfig(newConfig);
     setConfig(newConfig);
+    setAllFetchedItems({});
     loadData(selectedDate, newConfig);
+
+    // Sync ulang 31 tanggal dengan config yang baru disimpan
+    setIsInitialSync(true);
+    setSyncProgress({ current: 1, total: 31, percent: 0 });
+
+    let isSubscribed = true;
+    async function runReSync() {
+      const accumulated: Record<number, CycleItem[]> = {};
+      const total = 31;
+      for (let d = 1; d <= total; d++) {
+        if (!isSubscribed) break;
+        try {
+          const dateItems = await fetchCycleData(d, newConfig);
+          if (dateItems.length > 0) {
+            accumulated[d] = dateItems;
+          }
+        } catch (e) {
+          console.warn(`[HomePage] Save sync date ${d} notice:`, e);
+        }
+
+        if (isSubscribed) {
+          setSyncProgress({
+            current: d,
+            total,
+            percent: (d / total) * 100,
+          });
+          setAllFetchedItems({ ...accumulated });
+        }
+        await new Promise(r => setTimeout(r, 120));
+      }
+      if (isSubscribed) {
+        setIsInitialSync(false);
+      }
+    }
+
+    runReSync();
   }, [selectedDate, loadData]);
 
   const handleDateSelect = useCallback((date: number) => {
@@ -149,8 +246,10 @@ export default function HomePage() {
     dry: items.filter(i => i.source === 'dry').length,
   };
 
-  const activeMonth = config?.activeMonth ?? (new Date().getMonth() + 1);
-  const activeYear  = config?.activeYear  ?? new Date().getFullYear();
+  const activeMonth = config?.activeMonth ?? 9;
+  const activeYear  = config?.activeYear  ?? 2026;
+
+  const monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
   return (
     <div className="app-layout">
@@ -174,6 +273,9 @@ export default function HomePage() {
         itemCounts={counts}
         activeView={activeView}
         onChangeView={setActiveView}
+        periods={config?.periods && config.periods.length > 0 ? config.periods : DEFAULT_PERIODS}
+        activePeriodId={config?.activePeriodId || 'sep-2026'}
+        onSwitchPeriod={handleSwitchPeriod}
       />
 
       {/* Main Content */}
@@ -184,8 +286,8 @@ export default function HomePage() {
             <h1 className="topbar-title">Halo, {adminLoggedIn ? 'Admin Priandana' : 'User'} 👋</h1>
             <p className="topbar-subtitle">
               {activeView === 'summary'
-                ? `Menu Akumulasi SKU & Expired — Ringkasan per Tanggal (1-31 ${config ? ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][activeMonth] : 'Bulan'})`
-                : `Ringkasan data Cycle Count GACOAN · Padalarang (${selectedDate} ${config ? ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][activeMonth] : 'Bulan'} ${activeYear})`}
+                ? `Menu Akumulasi SKU & Expired — Ringkasan per Tanggal (1-31 ${monthNames[activeMonth] || 'Bulan'})`
+                : `Ringkasan data Cycle Count GACOAN · Padalarang (${selectedDate} ${monthNames[activeMonth] || 'Bulan'} ${activeYear})`}
             </p>
           </div>
           <div className="topbar-right">
@@ -206,7 +308,21 @@ export default function HomePage() {
           <SummaryTable
             initialItems={allFetchedItems[selectedDate] || items}
             allDateDataMap={allFetchedItems}
-            config={config || { apiKey: '', freshSpreadsheetId: '', drySpreadsheetId: '', freshRowStart: 6, dryRowStart: 7, freshColRange: 'A:P', dryColRange: 'A:P', activeMonth, activeYear, freshColMapping: { no: 0, location: 6, sku: 7, desc: 8, expDate: 9, qty: 10, uom: 11, customer: 12 }, dryColMapping: { no: 0, location: 5, sku: 6, desc: 7, expDate: 8, qty: 9, uom: 10, customer: 12 } }}
+            config={config || {
+              apiKey: '',
+              freshSpreadsheetId: '',
+              drySpreadsheetId: '',
+              freshRowStart: 6,
+              dryRowStart: 7,
+              freshColRange: 'A:P',
+              dryColRange: 'A:P',
+              activeMonth,
+              activeYear,
+              activePeriodId: 'sep-2026',
+              periods: DEFAULT_PERIODS,
+              freshColMapping: { no: 0, location: 6, sku: 7, desc: 8, expDate: 9, qty: 10, uom: 11, customer: 12 },
+              dryColMapping: { no: 0, location: 5, sku: 6, desc: 7, expDate: 8, qty: 9, uom: 10, customer: 12 },
+            }}
             selectedDate={selectedDate}
             sourceFilter={sourceFilter}
             onSetSource={setSource}

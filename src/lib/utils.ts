@@ -1,4 +1,4 @@
-import { CycleItem, SheetConfig, DEFAULT_CONFIG, DEFAULT_FRESH_COL_MAPPING, DEFAULT_DRY_COL_MAPPING } from './types';
+import { CycleItem, SheetConfig, Period, DEFAULT_CONFIG, DEFAULT_FRESH_COL_MAPPING, DEFAULT_DRY_COL_MAPPING } from './types';
 
 const CONFIG_KEY = 'cycle_count_config';
 
@@ -16,20 +16,46 @@ export function loadConfig(): SheetConfig {
     const raw = localStorage.getItem(CONFIG_KEY);
     if (!raw) return DEFAULT_CONFIG;
     const saved = JSON.parse(raw);
+
+    // Merge saved periods dengan default
+    const mergedPeriods = DEFAULT_CONFIG.periods.map(def => {
+      const savedPeriod = (saved.periods || []).find((p: Period) => p.id === def.id);
+      if (!savedPeriod) return def;
+      return {
+        ...def,
+        ...savedPeriod,
+        freshSpreadsheetId: savedPeriod.freshSpreadsheetId || def.freshSpreadsheetId,
+        drySpreadsheetId: savedPeriod.drySpreadsheetId !== undefined ? savedPeriod.drySpreadsheetId : def.drySpreadsheetId,
+      };
+    });
+
+    const activePeriodId = saved.activePeriodId || DEFAULT_CONFIG.activePeriodId;
+    const activePeriod = mergedPeriods.find(p => p.id === activePeriodId) || mergedPeriods[0];
+
     return {
       ...DEFAULT_CONFIG,
       ...saved,
       apiKey: saved.apiKey || DEFAULT_CONFIG.apiKey,
-      freshSpreadsheetId: saved.freshSpreadsheetId || DEFAULT_CONFIG.freshSpreadsheetId,
-      drySpreadsheetId: saved.drySpreadsheetId || DEFAULT_CONFIG.drySpreadsheetId,
-      activeMonth: saved.activeMonth || new Date().getMonth() + 1,
-      activeYear: saved.activeYear || new Date().getFullYear(),
+      activePeriodId: activePeriod.id,
+      activeMonth: activePeriod.month,
+      activeYear: activePeriod.year,
+      freshSpreadsheetId: activePeriod.freshSpreadsheetId || saved.freshSpreadsheetId || DEFAULT_CONFIG.freshSpreadsheetId,
+      drySpreadsheetId: activePeriod.drySpreadsheetId !== undefined ? activePeriod.drySpreadsheetId : (saved.drySpreadsheetId || DEFAULT_CONFIG.drySpreadsheetId),
+      periods: mergedPeriods,
       freshColMapping: { ...DEFAULT_FRESH_COL_MAPPING, ...(saved.freshColMapping || {}) },
       dryColMapping: { ...DEFAULT_DRY_COL_MAPPING, ...(saved.dryColMapping || {}) },
     };
   } catch {
     return DEFAULT_CONFIG;
   }
+}
+
+/** Ekstrak Spreadsheet ID jika user mem-paste full URL Google Sheets */
+export function extractSpreadsheetId(val: string): string {
+  const trimmed = val.trim();
+  const match = trimmed.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (match) return match[1];
+  return trimmed;
 }
 
 /** Format tanggal untuk display */

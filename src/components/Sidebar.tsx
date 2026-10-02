@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './Sidebar.module.css';
-import { SourceFilter } from '@/lib/types';
+import { SourceFilter, Period } from '@/lib/types';
 import { useState } from 'react';
 
 export type ActiveView = 'daily' | 'summary';
@@ -15,11 +15,11 @@ interface SidebarProps {
   onSettingsClick: () => void;
   onLogout: () => void;
   onLoginClick: () => void;
-  itemCounts: {
-    all: number;
-    fresh: number;
-    dry: number;
-  };
+  itemCounts: { all: number; fresh: number; dry: number };
+  // Period switcher
+  periods: Period[];
+  activePeriodId: string;
+  onSwitchPeriod: (id: string) => void;
 }
 
 export default function Sidebar({
@@ -32,6 +32,9 @@ export default function Sidebar({
   onLogout,
   onLoginClick,
   itemCounts,
+  periods,
+  activePeriodId,
+  onSwitchPeriod,
 }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -42,15 +45,13 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Mobile hamburger button */}
+      {/* Mobile hamburger */}
       <button
         className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ''}`}
         onClick={() => setMobileOpen(o => !o)}
         aria-label="Toggle menu"
       >
-        <span />
-        <span />
-        <span />
+        <span /><span /><span />
       </button>
 
       {/* Overlay backdrop */}
@@ -75,6 +76,39 @@ export default function Sidebar({
           </div>
         </div>
 
+        {/* ── PERIODE DATA ── */}
+        {periods.length > 0 && (
+          <div className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionDot} style={{ background: '#EC4899' }} />
+              <span className={styles.sectionLabel}>PERIODE DATA</span>
+            </div>
+            <div className={styles.periodList}>
+              {periods.map(p => {
+                const isActive = p.id === activePeriodId;
+                const hasDry = !!p.drySpreadsheetId;
+                return (
+                  <button
+                    key={p.id}
+                    className={`${styles.periodBtn} ${isActive ? styles.periodBtnActive : ''}`}
+                    onClick={() => handleNav(() => onSwitchPeriod(p.id))}
+                    title={!hasDry ? 'WH Dry belum tersedia untuk periode ini' : p.label}
+                  >
+                    <span className={styles.periodIcon}>🗓</span>
+                    <span className={styles.periodLabel}>{p.label}</span>
+                    <span className={styles.periodMeta}>
+                      {isActive && <span className={styles.periodActiveDot} />}
+                      {!hasDry && <span className={styles.periodWarning}>⚡</span>}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className={styles.divider} />
+
         {/* ── MENU UTAMA ── */}
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
@@ -82,7 +116,6 @@ export default function Sidebar({
             <span className={styles.sectionLabel}>MENU UTAMA</span>
           </div>
 
-          {/* Daily Dashboard */}
           <button
             className={`${styles.navBtn} ${activeView === 'daily' ? styles.active : ''}`}
             onClick={() => handleNav(() => { onChangeView('daily'); onSetSource('all'); })}
@@ -99,7 +132,6 @@ export default function Sidebar({
             {activeView === 'daily' && <span className={styles.activeIndicator} />}
           </button>
 
-          {/* Akumulasi SKU */}
           <button
             className={`${styles.navBtn} ${activeView === 'summary' ? styles.active : ''}`}
             onClick={() => handleNav(() => onChangeView('summary'))}
@@ -117,7 +149,6 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* ── DIVIDER ── */}
         <div className={styles.divider} />
 
         {/* ── FILTER GUDANG ── */}
@@ -131,7 +162,6 @@ export default function Sidebar({
             <p className={styles.filterHint}>Tampilkan data dari:</p>
 
             <div className={styles.filterChips}>
-              {/* ALL */}
               <button
                 className={`${styles.chip} ${sourceFilter === 'all' ? styles.chipAll : ''}`}
                 onClick={() => handleNav(() => onSetSource('all'))}
@@ -141,7 +171,6 @@ export default function Sidebar({
                 <span className={styles.chipCount}>{itemCounts.all}</span>
               </button>
 
-              {/* FRESH */}
               <button
                 className={`${styles.chip} ${sourceFilter === 'fresh' ? styles.chipFresh : ''}`}
                 onClick={() => handleNav(() => onSetSource('fresh'))}
@@ -154,7 +183,6 @@ export default function Sidebar({
                 <span className={styles.chipCount}>{itemCounts.fresh}</span>
               </button>
 
-              {/* DRY */}
               <button
                 className={`${styles.chip} ${sourceFilter === 'dry' ? styles.chipDry : ''}`}
                 onClick={() => handleNav(() => onSetSource('dry'))}

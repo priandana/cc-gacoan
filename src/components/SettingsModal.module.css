@@ -143,6 +143,72 @@
   gap: 14px;
 }
 
+/* ── PERIOD TABS IN MODAL ── */
+.periodTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.periodTab {
+  flex: 1;
+  padding: 10px 12px;
+  font-family: var(--font-head);
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 2px solid #0A0A0A;
+  background: #F1F5F9;
+  color: #0A0A0A;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.periodTab:hover {
+  background: #E2E8F0;
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0px #0A0A0A;
+}
+
+.periodTabActive {
+  background: #EC4899 !important;
+  color: #FFFFFF !important;
+  box-shadow: 3px 3px 0px #0A0A0A !important;
+}
+
+.activeBadge {
+  font-size: 0.65rem;
+  background: #FFD60A;
+  color: #0A0A0A;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #0A0A0A;
+  font-weight: 800;
+}
+
+.periodActiveCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #FEF3C7;
+  border: 1.5px solid #0A0A0A;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0A0A0A;
+  cursor: pointer;
+}
+
+.periodActiveCheckbox input {
+  cursor: pointer;
+}
+
 .inputGroup {
   display: flex;
   flex-direction: column;

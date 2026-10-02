@@ -111,6 +111,96 @@
   margin: 4px 0;
 }
 
+/* ── PERIODE DATA ── */
+.periodList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.periodBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 2px solid #2D2A3E;
+  background: #181628;
+  color: #9CA3AF;
+  font-family: var(--font-head);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.periodBtn:hover {
+  background: #25223D;
+  color: #F3F4F6;
+  border-color: #EC4899;
+  transform: translate(-2px, -2px);
+  box-shadow: 2px 2px 0px #0A0A0A;
+}
+
+.periodBtn:active {
+  transform: translate(0, 0);
+  box-shadow: none;
+}
+
+.periodBtnActive {
+  background: #EC4899 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #0A0A0A !important;
+  box-shadow: 3px 3px 0px #0A0A0A !important;
+}
+
+.periodBtnActive:hover {
+  background: #DB2777 !important;
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 4px 4px 0px #0A0A0A !important;
+}
+
+.periodIcon {
+  font-size: 0.95rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.periodLabel {
+  flex: 1;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+.periodMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.periodActiveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #FFD60A;
+  border: 1.5px solid #0A0A0A;
+  box-shadow: 0 0 6px rgba(255, 214, 10, 0.8);
+}
+
+.periodWarning {
+  font-size: 0.7rem;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid #F59E0B;
+  color: #FCD34D;
+  line-height: 1;
+}
+
 /* ── NAV BUTTONS ── */
 .navBtn {
   width: 100%;
